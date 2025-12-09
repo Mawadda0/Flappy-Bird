@@ -10,8 +10,8 @@ root = Tk()
 root.title("Flappy Bird Intro")
 
 # 1. Full Screen Setup
-root.attributes('-fullscreen', True)
-root.bind("<Escape>", lambda event: root.destroy())
+# root.attributes('-fullscreen', True)
+# root.bind("<Escape>", lambda event: root.destroy())
 
 # --- SCREEN SETUP ---
 screen_width = root.winfo_screenwidth()
@@ -148,7 +148,8 @@ def open_next_page(event):
 
     root.destroy()
 
-    bird2_path = r"D:\Coding\Flappy Bird\bird2.py"                  # PATH TO THE GAME
+    # Path to game
+    bird2_path = r"D:\Coding\Flappy Bird\bird2.py"
     
     # Check if file exists before running to avoid silent failure
     if os.path.exists(bird2_path):
@@ -189,7 +190,7 @@ def move():
         canvas.lift(bird_id)
 
     elif is_retreating:
-        x -= 20
+        x -= 12
         if x <= screen_width // 3.5:
             x = screen_width // 3.5
             is_retreating = False
@@ -197,7 +198,7 @@ def move():
 
     else:
         x += 6
-        if x > (pipe_x - 200):
+        if x > (pipe_x - 110):
             is_retreating = True
 
     canvas.coords(bird_id, x, current_y)
