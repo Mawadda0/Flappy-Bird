@@ -17,10 +17,10 @@ bird_image = pygame.transform.scale(bird_image, (BIRD_SIZE, BIRD_SIZE))
 bird_x = 150
 bird_y = HEIGHT / 2
 bird_speed_y = 0
-
-gravity = 0.5
-flap_strength = -10
 max_down_speed = 12
+game_started = False
+gravity = 0.3
+flap_strength = -7
 
 running = True
 while running:
@@ -34,10 +34,13 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
+        if not game_started:
+            game_started = True
         bird_speed_y = flap_strength
+    if game_started:
+        bird_speed_y += gravity
 
 
-    bird_speed_y += gravity
     if bird_speed_y > max_down_speed:
         bird_speed_y = max_down_speed
 
