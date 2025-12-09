@@ -1,2 +1,3 @@
-# Python_Project
-A project of a game made using python
+# Flappy bird 🐤
+A project of a flappy bird made using python and pygame
+
