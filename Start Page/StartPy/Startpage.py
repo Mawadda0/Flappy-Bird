@@ -10,8 +10,8 @@ root = Tk()
 root.title("Flappy Bird Intro")
 
 # 1. Full Screen Setup
-# root.attributes('-fullscreen', True)
-# root.bind("<Escape>", lambda event: root.destroy())
+root.attributes('-fullscreen', True)
+root.bind("<Escape>", lambda event: root.destroy())
 
 # --- SCREEN SETUP ---
 screen_width = root.winfo_screenwidth()
@@ -21,6 +21,9 @@ screen_height = root.winfo_screenheight()
 pygame.mixer.init()
 pygame.mixer.music.load("backgroundmp.mp3") 
 pygame.mixer.music.play(-1) 
+
+click_sound = pygame.mixer.Sound("Point.mp3") 
+click_sound.set_volume(0.5)
 
 
 canvas = Canvas(root, highlightthickness=0, bg="skyblue")
@@ -33,14 +36,12 @@ canvas.create_image(0, 0, image=bg_photo, anchor="nw")
 
 
 # --- TITLE IMAGES ---
-flappy_img = Image.open("flappy.png").resize((350, 100), Image.NEAREST)
+flappy_img = Image.open("flappyword.png").resize((350, 100), Image.NEAREST)
 flappy_photo = ImageTk.PhotoImage(flappy_img)
-id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50,
-                                image=flappy_photo, anchor="e", state='hidden')
-bird_word_img = Image.open("bird.png").resize((250, 100), Image.NEAREST)
+id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50, image=flappy_photo, anchor="e", state='hidden')
+bird_word_img = Image.open("birdword.png").resize((250, 100), Image.NEAREST)
 bird_word_photo = ImageTk.PhotoImage(bird_word_img)
-id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50,
-                                       image=bird_word_photo, anchor="w", state='hidden')
+id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50, image=bird_word_photo, anchor="w", state='hidden')
 
 # --- BUTTON ---
 def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
@@ -75,11 +76,12 @@ def check_hover(event):
     
     # Check if game is running and button is visible
     if not game_running:
+        canvas.config(cursor="") # Reset cursor if game ending
         return
     if canvas.itemcget("start_btn", "state") != 'normal':
         return
 
-    # Calculate the static "Hit Box" (Where the button sits originally)
+    # Calculate the static "Hit Box"
     left_x = btn_x - btn_width // 2
     right_x = btn_x + btn_width // 2
     top_y = btn_y - btn_height // 2
@@ -87,6 +89,9 @@ def check_hover(event):
 
     # Check if mouse is inside the box
     if left_x <= event.x <= right_x and top_y <= event.y <= bottom_y:
+        # === 1. CHANGE CURSOR TO HAND ===
+        canvas.config(cursor="hand2") 
+        
         # If inside and not already hovered, move UP
         if not is_hovered:
             is_hovered = True
@@ -95,6 +100,9 @@ def check_hover(event):
             except:
                 pass
     else:
+        # === 2. RESET CURSOR TO ARROW ===
+        canvas.config(cursor="") 
+        
         # If outside and currently hovered, move DOWN
         if is_hovered:
             is_hovered = False
@@ -103,11 +111,10 @@ def check_hover(event):
             except:
                 pass
 
-# Bind movement on the entire canvas to check our coordinates constantly
 canvas.bind('<Motion>', check_hover)
 
 # --- PIPE IMAGE ---
-pipe_img = Image.open("pipe.png").resize((500, 800), Image.LANCZOS)
+pipe_img = Image.open("pipe.png").resize((650, 850), Image.LANCZOS)
 pipe_photo = ImageTk.PhotoImage(pipe_img)
 pipe_x = screen_width - 180
 pipe_target_y = -200
@@ -134,6 +141,15 @@ move_after_id = None
 def open_next_page(event):
     global game_running, move_after_id
 
+    # 1. Play the sound
+    if click_sound:
+        click_sound.play()
+        
+        # 2. IMPORTANT: Pause slightly to let the sound actually come out
+        # before the window destroys itself. (300 milliseconds)
+        root.update() # Keep screen drawn
+        pygame.time.delay(300) 
+
     game_running = False
 
     # Unbind the motion checker so it stops firing
@@ -151,11 +167,7 @@ def open_next_page(event):
     # Path to game
     bird2_path = r"D:\Coding\Flappy Bird\bird2.py"
     
-    # Check if file exists before running to avoid silent failure
-    if os.path.exists(bird2_path):
-        subprocess.Popen([sys.executable, bird2_path])
-    else:
-        print(f"Error: Could not find file at {bird2_path}")
+    subprocess.Popen([sys.executable, bird2_path])
 
 canvas.tag_bind("start_btn", "<Button-1>", open_next_page)
 
@@ -171,7 +183,7 @@ def move():
     current_y = base_y + math.sin(sway_position) * 50
 
     # Pipe logic
-    if x > (pipe_x - 400):
+    if x > (pipe_x - 500):
         pipe_descending = True
     if pipe_descending and pipe_current_y < pipe_target_y:
         pipe_current_y += 15
@@ -190,7 +202,7 @@ def move():
         canvas.lift(bird_id)
 
     elif is_retreating:
-        x -= 12
+        x -= 10
         if x <= screen_width // 3.5:
             x = screen_width // 3.5
             is_retreating = False
