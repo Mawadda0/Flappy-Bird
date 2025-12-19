@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" type="image/png" href="bird2.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird Project Presentation</title>
@@ -19,14 +20,11 @@
         }
 
         body {
-            background-color: #202020;
-            /* Dark presentation background */
-            font-family: 'VT323', monospace;
-            /* Retro pixel font */
+            background-color: #202020; /* Dark presentation background */
+            font-family: 'VT323', monospace; /* Retro pixel font */
             height: 100vh;
             width: 100vw;
-            overflow: hidden;
-            /* Hide scrollbars for presentation mode */
+            overflow: hidden; /* Hide scrollbars for presentation mode */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,16 +35,12 @@
             position: relative;
             width: 1280px;
             height: 720px;
-            background-color: #70c5ce;
-            /* Flappy Sky Blue */
+            background-color: #70c5ce; /* Flappy Sky Blue */
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            border: 8px solid #ded895;
-            /* Border matching ground color */
-            flex-shrink: 0;
-            /* Prevent squishing */
-            transition: transform 0.2s ease;
-            /* Smooth scaling */
+            border: 8px solid #ded895; /* Border matching ground color */
+            flex-shrink: 0; /* Prevent squishing */
+            transition: transform 0.2s ease; /* Smooth scaling */
         }
 
         /* Animated Ground Strip at Bottom */
@@ -57,14 +51,12 @@
             width: 100%;
             height: 60px;
             background-color: #ded895;
-            border-top: 6px solid #73bf2e;
-            /* Grass */
+            border-top: 6px solid #73bf2e; /* Grass */
             z-index: 2;
         }
 
         .slide {
-            display: none;
-            /* Hidden by default */
+            display: none; /* Hidden by default */
             width: 100%;
             height: 100%;
             padding: 60px;
@@ -79,50 +71,32 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* 3. TYPOGRAPHY */
-        h1,
-        h2 {
-            font-family: 'Press Start 2P', cursive;
-            /* Header Font */
+        h1, h2 {
+            font-family: 'Press Start 2P', cursive; /* Header Font */
             color: #fff;
             text-shadow: 4px 4px 0 #000;
             line-height: 1.5;
             margin-bottom: 30px;
         }
 
-        h1 {
-            font-size: 60px;
-            text-align: center;
-        }
-
-        h2 {
-            font-size: 40px;
-        }
-
+        h1 { font-size: 60px; text-align: center; }
+        h2 { font-size: 40px; }
+        
         h3 {
             font-family: 'Press Start 2P', cursive;
             font-size: 20px;
-            color: #e86101;
-            /* Orange */
+            color: #e86101; /* Orange */
             margin-bottom: 15px;
             text-shadow: 2px 2px 0 #000;
         }
 
-        p,
-        li {
-            font-size: 32px;
-            /* Large readable text */
+        p, li {
+            font-size: 32px; /* Large readable text */
             color: #333;
             line-height: 1.4;
         }
@@ -139,11 +113,14 @@
             display: flex;
             gap: 40px;
             height: 100%;
-            align-items: center;
+            align-items: stretch; /* Stretch to match height */
         }
 
         .two-column>div {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .content-box {
@@ -152,7 +129,7 @@
             border-radius: 4px;
             padding: 30px;
             box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
-            height: 100%;
+            height: 100%; /* Fill the column height */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -178,22 +155,25 @@
             top: 10px;
         }
 
+        /* UPDATED IMAGE FRAME STYLE */
         .image-frame {
             border: 4px solid #fff;
             box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
-            background: #000;
-            height: 400px;
+            background: transparent; /* Changed from #000 to transparent */
+            height: 100%; /* Flexible height matching text */
+            min-height: 350px; /* Minimum height ensures it's not too small */
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
 
         .image-frame img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures full image is visible */
         }
 
         .grid-4 {
@@ -247,80 +227,24 @@
             font-family: sans-serif;
         }
 
-        /* 5. DECORATIVE FLAPPY BIRD CSS */
+        /* 5. DECORATIVE FLAPPY BIRD CSS (UPDATED FOR IMAGE) */
         .deco-bird {
             position: absolute;
             z-index: 5;
-            transform: scale(0.6);
-            /* Smaller decorative size */
+            /* Animation to float up and down */
             animation: floatBird 3s ease-in-out infinite;
-            pointer-events: none;
-            /* Ensure it doesn't block clicks */
+            pointer-events: none; /* Ensure it doesn't block clicks */
         }
-
-        .bird-body {
-            width: 60px;
-            height: 45px;
-            background: #f4ce42;
-            border: 3px solid #000;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            position: relative;
-        }
-
-        .bird-eye {
-            position: absolute;
-            right: 10px;
-            top: 5px;
-            width: 15px;
-            height: 15px;
-            background: #fff;
-            border: 2px solid #000;
-            border-radius: 50%;
-        }
-
-        .bird-eye::after {
-            content: '';
-            position: absolute;
-            right: 2px;
-            top: 5px;
-            width: 4px;
-            height: 4px;
-            background: #000;
-            border-radius: 50%;
-        }
-
-        .bird-wing {
-            position: absolute;
-            left: 10px;
-            top: 25px;
-            width: 25px;
-            height: 15px;
-            background: #fff;
-            border: 2px solid #000;
-            border-radius: 50%;
-        }
-
-        .bird-beak {
-            position: absolute;
-            right: -10px;
-            top: 20px;
-            width: 15px;
-            height: 10px;
-            background: #e86101;
-            border: 2px solid #000;
-            border-radius: 5px;
+        
+        .deco-bird img {
+            width: 60px; /* Size of your bird image */
+            height: auto;
+            image-rendering: pixelated; /* Keeps pixel art looking sharp */
         }
 
         @keyframes floatBird {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg) scale(0.6);
-            }
-
-            50% {
-                transform: translateY(-15px) rotate(-5deg) scale(0.6);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(-5deg) scale(1); }
         }
 
         /* BACKGROUND PIPES */
@@ -430,17 +354,8 @@
         }
 
         @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.8;
-            }
-
-            /* Reduced blink opacity range */
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         /* TEAM GRID */
@@ -510,15 +425,11 @@
             <button class="btn" onclick="nextSlide()"> NEXT </button>
         </div>
 
-        <!-- : Title -->
+        <!-- SLIDE 1: Title -->
         <div class="slide active title-screen">
             <!-- Deco Bird -->
             <div class="deco-bird" style="top: 20%; left: 15%;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <p style="color: #fff; font-size: 40px; margin-bottom: 20px; text-shadow: 2px 2px 0 #000;">UNIVERSITY
@@ -533,20 +444,15 @@
         <div class="slide">
             <!-- Deco Bird (Bottom Right) -->
             <div class="deco-bird" style="bottom: 100px; right: 50px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>THE LAUNCHER</h2>
             <div class="two-column">
                 <!-- Image Placeholder Column -->
                 <div>
-                    <div class="image-frame"
-                        style="background: #333; border: 4px dashed #777; display: flex; align-items: center; justify-content: center; color: #aaa; font-family: 'VT323'; font-size: 30px;">
-                       <img src="nour.jpeg" alt="Launcher Screenshot" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <div class="image-frame">
+                        <img src="nour.jpeg" alt="Launcher Screenshot">
                     </div>
                 </div>
                 <!-- Code Column -->
@@ -578,11 +484,7 @@
         <div class="slide">
             <!-- Deco Bird (Top Right) -->
             <div class="deco-bird" style="top: 30px; right: 30px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>LAUNCHER LIBRARIES</h2>
@@ -618,11 +520,7 @@
         <div class="slide">
             <!-- Deco Bird (Left Side) -->
             <div class="deco-bird" style="top: 50%; left: 30px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>OUTLINE</h2>
@@ -656,11 +554,7 @@
         <div class="slide">
             <!-- Deco Bird (Bottom Center) -->
             <div class="deco-bird" style="bottom: 80px; left: 50%; transform: translateX(-50%);">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>WHY FLAPPY BIRD?</h2>
@@ -687,11 +581,7 @@
         <div class="slide">
             <!-- Deco Bird (Top Right) -->
             <div class="deco-bird" style="top: 100px; right: 100px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>THE DIGITAL ARCADE</h2>
@@ -713,7 +603,7 @@
                 </div>
                 <div>
                     <div class="image-frame">
-                        <img src="http://googleusercontent.com/image_collection/image_retrieval/3163416057506091098"
+                        <img src="arcade.png"
                             alt="Gameplay Screenshot">
                     </div>
                 </div>
@@ -724,11 +614,7 @@
         <div class="slide">
             <!-- Deco Bird (Top Left) -->
             <div class="deco-bird" style="top: 120px; left: 50px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>HOW IT WAS BUILT</h2>
@@ -760,11 +646,7 @@
         <div class="slide">
             <!-- Deco Bird (Bottom Left) -->
             <div class="deco-bird" style="bottom: 120px; left: 50px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>REPOSITORY OVERVIEW</h2>
@@ -796,18 +678,14 @@
         <div class="slide">
             <!-- Deco Bird (Top Right) -->
             <div class="deco-bird" style="top: 20px; right: 20px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>1. MAIN MODULE</h2>
             <div class="two-column">
                 <div>
                     <div class="image-frame">
-                        <img src="http://googleusercontent.com/image_collection/image_retrieval/18364248081937101374"
+                        <img src="start.png"
                             alt="Code Screen">
                     </div>
                 </div>
@@ -831,18 +709,14 @@
         <div class="slide">
             <!-- Deco Bird (Left Middle) -->
             <div class="deco-bird" style="top: 40%; left: 30px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>2. BIRD MODULE</h2>
             <div class="two-column">
                 <div>
                     <div class="image-frame" style="background: #fff; border: 4px solid #333;">
-                        <img src="bird.png"
+                        <img src="bird.jpeg"
                             alt="Bird Diagram">
                     </div>
                 </div>
@@ -861,22 +735,18 @@
             </div>
         </div>
 
-        <!-- SLIDE 11: CONTROLS MODULE -->
+        <!-- SLIDE 11: SCORE MODULE -->
         <div class="slide">
             <!-- Deco Bird (Bottom Right) -->
             <div class="deco-bird" style="bottom: 80px; right: 80px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>3. SCORE MODULE</h2>
             <div class="two-column">
                 <div>
                     <div class="image-frame">
-                        <img src="control.png"
+                        <img src="score.jpeg"
                             alt="Score Handling" >
                     </div>
                 </div>
@@ -900,18 +770,14 @@
         <div class="slide">
             <!-- Deco Bird (Top Left) -->
             <div class="deco-bird" style="top: 80px; left: 80px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>4. PIPES MODULE</h2>
             <div class="two-column">
                 <div>
                     <div class="image-frame">
-                        <img src="pipes.png"
+                        <img src="pipes.jpeg"
                             alt="Pipes Gameplay">
                     </div>
                 </div>
@@ -934,11 +800,7 @@
         <div class="slide">
             <!-- Deco Bird (Bottom Left) -->
             <div class="deco-bird" style="bottom: 100px; left: 40px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>5. COLLISION MODULE</h2>
@@ -968,11 +830,7 @@
         <div class="slide">
             <!-- Deco Bird (Top Center) -->
             <div class="deco-bird" style="top: 80px; left: 50%; transform: translateX(-50%);">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>6. SOUND MODULE</h2>
@@ -1003,11 +861,7 @@
         <div class="slide">
             <!-- Deco Bird (Right Middle) -->
             <div class="deco-bird" style="top: 50%; right: 40px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>GAME FLOW</h2>
@@ -1035,11 +889,7 @@
         <div class="slide">
             <!-- Deco Bird (Top Right) -->
             <div class="deco-bird" style="top: 20px; right: 20px;">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h2>MISSION COMPLETED</h2>
@@ -1095,11 +945,7 @@
         <div class="slide title-screen">
             <!-- Deco Bird (Center) -->
             <div class="deco-bird" style="top: 20%; left: 50%; transform: translateX(-50%);">
-                <div class="bird-body">
-                    <div class="bird-eye"></div>
-                    <div class="bird-wing"></div>
-                    <div class="bird-beak"></div>
-                </div>
+                <img src="bird2.png" alt="Flappy Bird">
             </div>
 
             <h1>Q / A</h1>
