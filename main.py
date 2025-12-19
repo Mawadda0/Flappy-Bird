@@ -77,7 +77,7 @@ def move_pipes():
 
 def create_pipes():
     random_pipe_y=pipe_y - pipe_height/4 - random.random()*(pipe_height/2)  
-    open_space=GAME_HEIGHT/4
+    open_space=GAME_HEIGHT/3
     top_pipe=Pipe(TOP)
     top_pipe.y=random_pipe_y
     pipes.append(top_pipe)
@@ -85,6 +85,29 @@ def create_pipes():
     bottom_pipe.y=top_pipe.y+top_pipe.height+open_space
     pipes.append(bottom_pipe)
 
+
+
+#-------------------------------------#-------------------------------------#----------------------------
+# collision handler
+#-------------------------------------#-------------------------------------#----------------------------
+def check_collisions(bird_rect, pipes, floor_rect_y):
+    # 1. Loop through the list of pipes to check for hits
+    for pipe in pipes:
+        if bird_rect.colliderect(pipe):
+            return True
+
+    # 2. Check if bird hit the floor
+    if bird_rect.bottom >= floor_rect_y:
+        return True
+
+    # No collision detected
+    return False
+
+
+
+#-------------------------------------#-------------------------------------#----------------------------
+# main loop
+#-------------------------------------#-------------------------------------#----------------------------
 
 running = True
 while running:
@@ -121,11 +144,20 @@ while running:
         bird_speed_y = 0
 
 
+
     angle = -bird_speed_y * 2
     rotated_bird = pygame.transform.rotate(bird_image, angle)
     bird_rect = rotated_bird.get_rect(center = (bird_x + BIRD_SIZE / 2, bird_y + BIRD_SIZE / 2))
-    
+
     screen.blit(rotated_bird, bird_rect.topleft)
+
+    bird_rect = pygame.Rect(bird_x + 25, bird_y + 25, BIRD_SIZE - 50, BIRD_SIZE - 50)
+
+
+    if check_collisions(bird_rect, pipes, HEIGHT):
+        print("LOSER")
+        running = False
+
 
     move_pipes()
     draw_pipes()
