@@ -147,7 +147,7 @@ def open_next_page(event):
 
     root.quit()
 
-    bird2_path = "./version_two/bird2.py"                  # PATH TO THE GAME
+    bird2_path = "./main.py"                  # PATH TO THE GAME
     
     # Check if file exists before running to avoid silent failure
     if os.path.exists(bird2_path):

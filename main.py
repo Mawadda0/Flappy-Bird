@@ -20,14 +20,37 @@ BIRD_SIZE = 80
 bird_image = pygame.image.load("./version_two/bird2.png").convert_alpha()
 bird_image = pygame.transform.scale(bird_image, (BIRD_SIZE, BIRD_SIZE))
 
-bird_x = WIDTH / 3
-bird_y = HEIGHT / 2
-bird_speed_y = 0
 max_down_speed = 100
-game_started = False
 gravity = 0.4
-flap_strength = -5
+jump_strength = -5
 
+class Bird():
+    def __init__(self):
+        self.x = WIDTH / 3
+        self.y = HEIGHT / 2
+        self.speed_y = 0
+
+
+bird = Bird()
+
+def jump_bird(bird):
+    bird.speed_y = jump_strength
+
+def update_bird(bird):
+    bird.speed_y += gravity
+    if bird.speed_y > max_down_speed:
+        bird.speed_y = max_down_speed
+    
+    bird.y += bird.speed_y
+
+    angle = -bird.speed_y * 2
+    rotated_bird = pygame.transform.rotate(bird_image, angle)
+    bird_rect = rotated_bird.get_rect(center = (bird.x + BIRD_SIZE / 2, bird.y + BIRD_SIZE / 2))
+    screen.blit(rotated_bird, bird_rect.topleft)
+
+
+def get_bird_hitbox(bird):
+    return pygame.Rect(bird.x + 25, bird.y + 25, BIRD_SIZE - 50, BIRD_SIZE - 50)
 
 #-------------------------------------#-------------------------------------#----------------------------
 # pipes handler
@@ -103,7 +126,30 @@ def check_collisions(bird_rect, pipes, floor_rect_y):
     # No collision detected
     return False
 
+#-------------------------------------#-------------------------------------#----------------------------
+# score handler
+#-------------------------------------#-------------------------------------#----------------------------
 
+score = 0
+
+try:
+    score_font = pygame.font.Font(None, 60)
+except pygame.error as e:
+    print(f"Font loading error: {e}")
+    score_font = pygame.font.Font(None, 60)
+
+def check_score(bird_rect, pipes, score):
+    for pipe in pipes:
+        if bird_rect.left > pipe.x and not pipe.passed:
+            score += 0.5
+            pipe.passed = True
+    return score
+def draw_score(screen, score, width):        
+    score_surface = score_font.render(str(int(score)), True, (255, 255, 255))
+    score_rect = score_surface.get_rect(center=(width // 2, 50))
+    screen.blit(score_surface, score_rect)
+def reset_score():
+    return 0
 
 #-------------------------------------#-------------------------------------#----------------------------
 # main loop
@@ -114,7 +160,6 @@ while running:
     clock.tick(FPS)
     screen.fill((135, 206, 250))
 
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -123,44 +168,22 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
-        if not game_started:
-            game_started = True
-        bird_speed_y = flap_strength
-    if game_started:
-        bird_speed_y += gravity
+        jump_bird(bird)
 
 
-    if bird_speed_y > max_down_speed:
-        bird_speed_y = max_down_speed
-
-    bird_y += bird_speed_y
-
-
-    if bird_y < 0:
-        bird_y = 0
-        bird_speed_y = 0
-    if bird_y > HEIGHT - BIRD_SIZE:
-        bird_y = HEIGHT - BIRD_SIZE
-        bird_speed_y = 0
-
-
-
-    angle = -bird_speed_y * 2
-    rotated_bird = pygame.transform.rotate(bird_image, angle)
-    bird_rect = rotated_bird.get_rect(center = (bird_x + BIRD_SIZE / 2, bird_y + BIRD_SIZE / 2))
-
-    screen.blit(rotated_bird, bird_rect.topleft)
-
-    bird_rect = pygame.Rect(bird_x + 25, bird_y + 25, BIRD_SIZE - 50, BIRD_SIZE - 50)
-
-
-    if check_collisions(bird_rect, pipes, HEIGHT):
-        print("LOSER")
-        running = False
-
+    update_bird(bird)
 
     move_pipes()
     draw_pipes()
+
+    bird_hitbox = get_bird_hitbox(bird)
+
+    if check_collisions(bird_hitbox, pipes, HEIGHT):
+        print("LOSER")
+        running = False
+
+    score = check_score(bird_hitbox, pipes, score)
+    draw_score(screen, score, WIDTH)
     pygame.display.update()
 
 pygame.quit()
