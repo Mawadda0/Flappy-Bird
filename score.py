@@ -10,7 +10,7 @@ except pygame.error as e:
     print(f"Font loading error: {e}")
     score_font = pygame.font.Font(None, 60)
 
-def check(bird , pipes,score):
+def check(bird , pipes, score):
     for pipe in pipes:
         if bird.rect.left > pipe.x and not pipe.scored:
             score += 1
