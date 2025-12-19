@@ -247,7 +247,123 @@
             font-family: sans-serif;
         }
 
-        /* 5. NAVIGATION CONTROLS */
+        /* 5. DECORATIVE FLAPPY BIRD CSS */
+        .deco-bird {
+            position: absolute;
+            z-index: 5;
+            transform: scale(0.6);
+            /* Smaller decorative size */
+            animation: floatBird 3s ease-in-out infinite;
+            pointer-events: none;
+            /* Ensure it doesn't block clicks */
+        }
+
+        .bird-body {
+            width: 60px;
+            height: 45px;
+            background: #f4ce42;
+            border: 3px solid #000;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+        }
+
+        .bird-eye {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+
+        .bird-eye::after {
+            content: '';
+            position: absolute;
+            right: 2px;
+            top: 5px;
+            width: 4px;
+            height: 4px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        .bird-wing {
+            position: absolute;
+            left: 10px;
+            top: 25px;
+            width: 25px;
+            height: 15px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+
+        .bird-beak {
+            position: absolute;
+            right: -10px;
+            top: 20px;
+            width: 15px;
+            height: 10px;
+            background: #e86101;
+            border: 2px solid #000;
+            border-radius: 5px;
+        }
+
+        @keyframes floatBird {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(0.6);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(-5deg) scale(0.6);
+            }
+        }
+
+        /* BACKGROUND PIPES */
+        .bg-pipe {
+            position: absolute;
+            width: 80px;
+            background-color: #73bf2e;
+            border: 4px solid #000;
+            z-index: 0;
+            /* Behind slides */
+            box-shadow: inset 10px 0 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .bg-pipe.bottom {
+            bottom: 60px;
+            /* Sit on ground */
+            border-bottom: none;
+        }
+
+        .bg-pipe.top {
+            top: 0;
+            border-top: none;
+        }
+
+        .bg-pipe .cap {
+            position: absolute;
+            width: 90px;
+            height: 40px;
+            background-color: #73bf2e;
+            border: 4px solid #000;
+            left: -9px;
+            box-shadow: inset 10px 0 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .bg-pipe.bottom .cap {
+            top: 0;
+        }
+
+        .bg-pipe.top .cap {
+            bottom: 0;
+        }
+
+        /* 6. NAVIGATION CONTROLS */
         .controls {
             position: absolute;
             bottom: 20px;
@@ -371,7 +487,22 @@
 
         <!-- Decoration -->
         <div class="ground-strip"></div>
-        <div class="slide-counter">SLIDE <span id="current">1</span> / 15</div>
+
+        <!-- BACKGROUND PIPES -->
+        <!-- Top Left -->
+        <div class="bg-pipe top" style="left: 60px; height: 160px;">
+            <div class="cap"></div>
+        </div>
+        <!-- Bottom Right -->
+        <div class="bg-pipe bottom" style="right: 120px; height: 220px;">
+            <div class="cap"></div>
+        </div>
+        <!-- Bottom Center-Left (Optional small one) -->
+        <div class="bg-pipe bottom" style="left: 20%; height: 80px;">
+            <div class="cap"></div>
+        </div>
+
+        <div class="slide-counter">SLIDE <span id="current">1</span> / <span id="total">17</span></div>
 
         <!-- Navigation -->
         <div class="controls">
@@ -381,6 +512,15 @@
 
         <!-- SLIDE 1: Title -->
         <div class="slide active title-screen">
+            <!-- Deco Bird -->
+            <div class="deco-bird" style="top: 20%; left: 15%;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <p style="color: #fff; font-size: 40px; margin-bottom: 20px; text-shadow: 2px 2px 0 #000;">UNIVERSITY
                 PROJECT</p>
             <h1>FLAPPY BIRD</h1>
@@ -389,11 +529,110 @@
             <div class="press-start" onclick="nextSlide()">PRESS TO START</div>
         </div>
 
-        <!-- SLIDE 2: Outline -->
+        <!-- SLIDE 2: The Launcher -->
         <div class="slide">
+            <!-- Deco Bird (Bottom Right) -->
+            <div class="deco-bird" style="bottom: 100px; right: 50px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
+            <h2>THE LAUNCHER</h2>
+            <div class="two-column">
+                <!-- Image Placeholder Column -->
+                <div>
+                    <div class="image-frame"
+                        style="background: #333; border: 4px dashed #777; display: flex; align-items: center; justify-content: center; color: #aaa; font-family: 'VT323'; font-size: 30px;">
+                       <img src="nour.jpeg" alt="Launcher Screenshot" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+                <!-- Code Column -->
+                <div>
+                    <div class="content-box" style="background: #222; color: #fff;">
+                        <h3 style="color: #00ff00;">Transition Code</h3>
+                        <p style="font-size: 18px; color: #ccc;">The bridge between Tkinter and Pygame.</p>
+                        <div class="code-snippet" style="font-size: 14px; margin-top: 10px;">
+                            def open_next_page(event):<br>
+                            &nbsp;&nbsp;# 1. Audio Feedback<br>
+                            &nbsp;&nbsp;click_sound.play()<br>
+                            &nbsp;&nbsp;root.update()<br>
+                            &nbsp;&nbsp;pygame.time.delay(300)<br>
+                            <br>
+                            &nbsp;&nbsp;# 2. Close Menu<br>
+                            &nbsp;&nbsp;root.destroy()<br>
+                            <br>
+                            &nbsp;&nbsp;# 3. Launch Game Process<br>
+                            &nbsp;&nbsp;subprocess.Popen([<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;sys.executable, "bird2.py"<br>
+                            &nbsp;&nbsp;])
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Launcher Libraries -->
+        <div class="slide">
+            <!-- Deco Bird (Top Right) -->
+            <div class="deco-bird" style="top: 30px; right: 30px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
+            <h2>LAUNCHER LIBRARIES</h2>
+            <div class="two-column">
+                <!-- Left Column -->
+                <div>
+                    <div class="content-box">
+                        <h3>UI & Assets</h3>
+                        <ul style="font-size: 24px;">
+                            <li><strong>Tkinter:</strong> Standard GUI toolkit used to create the start menu window.
+                            </li>
+                            <li><strong>PIL (Pillow):</strong> Handles image loading and resizing for the background.
+                            </li>
+                            <li><strong>Pygame:</strong> Utilized primarily for the audio mixer (Music/SFX).</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Right Column -->
+                <div>
+                    <div class="content-box">
+                        <h3>System & Logic</h3>
+                        <ul style="font-size: 24px;">
+                            <li><strong>Subprocess:</strong> Launches the independent game script ("bird2.py").</li>
+                            <li><strong>Math:</strong> Calculates sine waves for the "hovering" animation.</li>
+                            <li><strong>Sys:</strong> Provides access to the system path for the executable.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Outline -->
+        <div class="slide">
+            <!-- Deco Bird (Left Side) -->
+            <div class="deco-bird" style="top: 50%; left: 30px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>OUTLINE</h2>
             <div class="two-column">
                 <div class="grid-4" style="height: auto; gap: 40px;">
+                    <div class="tile">
+                        <i class="fa-solid fa-rocket"></i>
+                        <h3>LAUNCHER</h3>
+                        <p>Tkinter Start Menu</p>
+                    </div>
                     <div class="tile">
                         <i class="fa-solid fa-code"></i>
                         <h3>THE CODE</h3>
@@ -405,11 +644,6 @@
                         <p>States & Logic</p>
                     </div>
                     <div class="tile">
-                        <i class="fa-brands fa-python"></i>
-                        <h3>STACK</h3>
-                        <p>Python & Pygame</p>
-                    </div>
-                    <div class="tile">
                         <i class="fa-solid fa-users"></i>
                         <h3>THE TEAM</h3>
                         <p>Credits & Roles</p>
@@ -418,8 +652,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 3: Why Flappy Bird -->
+        <!-- SLIDE 5: Why Flappy Bird -->
         <div class="slide">
+            <!-- Deco Bird (Bottom Center) -->
+            <div class="deco-bird" style="bottom: 80px; left: 50%; transform: translateX(-50%);">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>WHY FLAPPY BIRD?</h2>
             <div class="two-column">
                 <div class="content-box">
@@ -440,8 +683,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 4: The Digital Arcade -->
+        <!-- SLIDE 6: The Digital Arcade -->
         <div class="slide">
+            <!-- Deco Bird (Top Right) -->
+            <div class="deco-bird" style="top: 100px; right: 100px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>THE DIGITAL ARCADE</h2>
             <div class="two-column">
                 <div>
@@ -468,8 +720,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 5: How It Was Built -->
+        <!-- SLIDE 7: How It Was Built -->
         <div class="slide">
+            <!-- Deco Bird (Top Left) -->
+            <div class="deco-bird" style="top: 120px; left: 50px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>HOW IT WAS BUILT</h2>
             <div class="grid-4" style="margin-top: 20px;">
                 <div class="tile" style="border-color: #3776ab;">
@@ -495,8 +756,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 6: Repository Overview -->
+        <!-- SLIDE 8: Repository Overview -->
         <div class="slide">
+            <!-- Deco Bird (Bottom Left) -->
+            <div class="deco-bird" style="bottom: 120px; left: 50px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>REPOSITORY OVERVIEW</h2>
             <div class="two-column">
                 <div>
@@ -522,8 +792,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 7: MAIN MODULE -->
+        <!-- SLIDE 9: MAIN MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Top Right) -->
+            <div class="deco-bird" style="top: 20px; right: 20px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>1. MAIN MODULE</h2>
             <div class="two-column">
                 <div>
@@ -548,8 +827,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 8: BIRD MODULE -->
+        <!-- SLIDE 10: BIRD MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Left Middle) -->
+            <div class="deco-bird" style="top: 40%; left: 30px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>2. BIRD MODULE</h2>
             <div class="two-column">
                 <div>
@@ -573,8 +861,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 9: CONTROLS MODULE -->
+        <!-- SLIDE 11: CONTROLS MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Bottom Right) -->
+            <div class="deco-bird" style="bottom: 80px; right: 80px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>3. CONTROLS MODULE</h2>
             <div class="two-column">
                 <div>
@@ -599,8 +896,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 10: PIPES MODULE -->
+        <!-- SLIDE 12: PIPES MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Top Left) -->
+            <div class="deco-bird" style="top: 80px; left: 80px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>4. PIPES MODULE</h2>
             <div class="two-column">
                 <div>
@@ -624,8 +930,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 11: COLLISION MODULE -->
+        <!-- SLIDE 13: COLLISION MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Bottom Left) -->
+            <div class="deco-bird" style="bottom: 100px; left: 40px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>5. COLLISION MODULE</h2>
             <div class="two-column">
                 <div>
@@ -649,8 +964,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 12: SOUND MODULE -->
+        <!-- SLIDE 14: SOUND MODULE -->
         <div class="slide">
+            <!-- Deco Bird (Top Center) -->
+            <div class="deco-bird" style="top: 80px; left: 50%; transform: translateX(-50%);">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>6. SOUND MODULE</h2>
             <div class="two-column">
                 <div style="display: flex; justify-content: center;">
@@ -675,8 +999,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 13: Game Flow -->
+        <!-- SLIDE 15: Game Flow -->
         <div class="slide">
+            <!-- Deco Bird (Right Middle) -->
+            <div class="deco-bird" style="top: 50%; right: 40px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h2>GAME FLOW</h2>
             <div class="two-column">
                 <div>
@@ -698,13 +1031,24 @@
             </div>
         </div>
 
-        <!-- SLIDE 14: Team -->
+        <!-- SLIDE 16: Team -->
         <div class="slide">
-            <h2>MISSION COMPLETED</h2>
-            <div class="content-box" style="text-align: center; display: block; overflow-y: auto;">
-                <h3 style="margin-top: 10px;">PROJECT DEVELOPERS</h3>
+            <!-- Deco Bird (Top Right) -->
+            <div class="deco-bird" style="top: 20px; right: 20px;">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
 
-                <div class="team-grid">
+            <h2>MISSION COMPLETED</h2>
+            <!-- Fixed: Switched to flex layout starting from top, added bottom margin to clear ground strip -->
+            <div class="content-box"
+                style="display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; flex: 1; min-height: 0; margin-bottom: 40px;">
+                <h3 style="margin-top: 10px; flex-shrink: 0; text-align: center;">PROJECT DEVELOPERS</h3>
+
+                <div class="team-grid" style="padding-bottom: 20px;">
                     <div class="team-member">
                         <h4>Mohanad Galmad</h4>
                         <span>Developer</span>
@@ -747,8 +1091,17 @@
             </div>
         </div>
 
-        <!-- SLIDE 15: Q&A -->
+        <!-- SLIDE 17: Q&A -->
         <div class="slide title-screen">
+            <!-- Deco Bird (Center) -->
+            <div class="deco-bird" style="top: 20%; left: 50%; transform: translateX(-50%);">
+                <div class="bird-body">
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-beak"></div>
+                </div>
+            </div>
+
             <h1>Q / A</h1>
             <p class="subtitle">Thank You!</p>
             <div style="margin-top: 50px; font-size: 24px; color: #fff;">
@@ -759,10 +1112,15 @@
     </div>
 
     <script>
+        // Start at Slide 1
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const counter = document.getElementById('current');
+        const totalSlides = document.getElementById('total');
         const frame = document.querySelector('.presentation-frame');
+
+        // Initial total set
+        totalSlides.innerText = slides.length;
 
         function showSlide(index) {
             slides.forEach(slide => slide.classList.remove('active'));
@@ -771,7 +1129,8 @@
             if (index < 0) currentSlide = slides.length - 1;
 
             slides[currentSlide].classList.add('active');
-            counter.innerText = currentSlide + 1;
+            // Updated total count
+            counter.innerText = (currentSlide + 1);
         }
 
         function nextSlide() {
