@@ -19,25 +19,24 @@ screen_height = root.winfo_screenheight()
 
 # --- MUSIC SETUP ---
 pygame.mixer.init()
-pygame.mixer.music.load("backgroundmp.mp3") 
+pygame.mixer.music.load("./start_page/start_page_sources/backgroundmp.mp3") 
 pygame.mixer.music.play(-1) 
-
 
 canvas = Canvas(root, highlightthickness=0, bg="skyblue")
 canvas.pack(fill="both", expand=True)
 
 # --- BACKGROUND ---
-bg_img = Image.open("background.png").resize((screen_width, screen_height), Image.LANCZOS)
+bg_img = Image.open("./start_page/start_page_sources/background.png").resize((screen_width, screen_height), Image.LANCZOS)
 bg_photo = ImageTk.PhotoImage(bg_img)
 canvas.create_image(0, 0, image=bg_photo, anchor="nw")
 
 
 # --- TITLE IMAGES ---
-flappy_img = Image.open("flappy.png").resize((350, 100), Image.NEAREST)
+flappy_img = Image.open("./start_page/start_page_sources/flappy.png").resize((350, 100), Image.NEAREST)
 flappy_photo = ImageTk.PhotoImage(flappy_img)
 id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50,
                                 image=flappy_photo, anchor="e", state='hidden')
-bird_word_img = Image.open("bird.png").resize((250, 100), Image.NEAREST)
+bird_word_img = Image.open("./start_page/start_page_sources/bird.png").resize((250, 100), Image.NEAREST)
 bird_word_photo = ImageTk.PhotoImage(bird_word_img)
 id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50,
                                        image=bird_word_photo, anchor="w", state='hidden')
@@ -107,7 +106,7 @@ def check_hover(event):
 canvas.bind('<Motion>', check_hover)
 
 # --- PIPE IMAGE ---
-pipe_img = Image.open("pipe.png").resize((500, 800), Image.LANCZOS)
+pipe_img = Image.open("./start_page/start_page_sources/pipe.png").resize((500, 800), Image.LANCZOS)
 pipe_photo = ImageTk.PhotoImage(pipe_img)
 pipe_x = screen_width - 180
 pipe_target_y = -200
@@ -115,7 +114,7 @@ pipe_current_y = -600
 pipe_id = canvas.create_image(pipe_x, pipe_current_y, image=pipe_photo, anchor="n")
 
 # --- BIRD ---
-img = Image.open("bird22.png").resize((200, 200), Image.LANCZOS)
+img = Image.open("./start_page/start_page_sources/bird22.png").resize((200, 200), Image.LANCZOS)
 bird = ImageTk.PhotoImage(img)
 x = 0
 base_y = screen_height // 4
@@ -148,7 +147,7 @@ def open_next_page(event):
 
     root.destroy()
 
-    bird2_path = r"D:\Coding\Flappy Bird\bird2.py"                  # PATH TO THE GAME
+    # bird2_path = r"D:\Coding\Flappy Bird\bird2.py"                  # PATH TO THE GAME
     
     # Check if file exists before running to avoid silent failure
     if os.path.exists(bird2_path):
