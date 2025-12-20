@@ -63,11 +63,9 @@ id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 
 #--- Buttons ---
 btn_width = 220
 btn_height = 60
-btn_y = screen_height // 2.3 + 100
-gap = 40
+btn_y = screen_height // 2 + 50
 
-btn_start_x = (screen_width // 2) - (btn_width // 2) - (gap // 2)
-btn_multi_x = (screen_width // 2) + (btn_width // 2) + (gap // 2)
+btn_start_x = screen_width // 2
 
 def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
     x1, y1 = x - w//2, y - h//2
@@ -85,18 +83,13 @@ btn_bg = create_rounded_rect(canvas, btn_start_x, btn_y, btn_width, btn_height, 
 btn_text = canvas.create_text(btn_start_x, btn_y, text="START GAME", fill="white",
                               font=(FONT_NAME, 18), state='hidden', tags="start_btn")
 
-btn_multi_bg = create_rounded_rect(canvas, btn_multi_x, btn_y, btn_width, btn_height, corner_radius=20,
-                             fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="multi")
-btn_multi_text = canvas.create_text(btn_multi_x, btn_y, text="MULTIPLAYER", fill="white",
-                              font=(FONT_NAME, 18), state='hidden', tags="multi")
-
 # --- HOVER LOGIC ---
 hover_states = {"start_btn": False, "multi": False}
 game_running = True
 
 def check_hover(event):
     if not game_running: return
-    buttons = [("start_btn", btn_start_x, btn_y), ("multi", btn_multi_x, btn_y)]
+    buttons = [("start_btn", btn_start_x, btn_y)]
     any_hovered = False
     for tag, bx, by in buttons:
         if canvas.itemcget(tag, "state") != 'normal': continue
@@ -129,7 +122,6 @@ def launch_game(script_name):
     subprocess.Popen([sys.executable, script_path])
 
 canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("start.py"))  #We will add the actual file here
-canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer.py"))#We will add the actual file here
 
 # --- PIPE & BIRD ---
 pipe_img = Image.open(get_path("pipe.png")).resize((650, 850), Image.LANCZOS)
@@ -165,9 +157,7 @@ def move():
         canvas.itemconfig(id_flappy, state='normal')
         canvas.itemconfig(id_bird_word, state='normal')
         canvas.itemconfig("start_btn", state='normal')
-        canvas.itemconfig("multi", state='normal') 
         canvas.lift("start_btn")
-        canvas.lift("multi") 
         canvas.lift(bird_id)
     elif is_retreating:
         x -= 10
