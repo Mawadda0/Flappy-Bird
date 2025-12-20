@@ -36,13 +36,16 @@ canvas.pack(fill="both", expand=True)
 # --- 1. CUSTOM FONT LOADER ---
 FONT_PATH = get_path("FSEX300.ttf") 
 FONT_NAME = "Fixedsys Excelsior 301"
+USED_FONT = FONT_NAME
 
 def load_custom_font(path):
+    global USED_FONT
     if os.path.exists(path):
         if sys.platform.startswith("win"):
-          ctypes.windll.gdi32.AddFontResourceExW(path, 0x10, 0)
+            ctypes.windll.gdi32.AddFontResourceExW(path, 0x10, 0)
     else:
-        print(f"Font not found at: {path}")
+        print(f"Font not found at: {path}. Using Arial instead.")
+        USED_FONT = "Arial"
 
 load_custom_font(FONT_PATH)
 
@@ -81,7 +84,7 @@ def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
 btn_bg = create_rounded_rect(canvas, btn_start_x, btn_y, btn_width, btn_height, corner_radius=20,
                              fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="start_btn")
 btn_text = canvas.create_text(btn_start_x, btn_y, text="START GAME", fill="white",
-                              font=(FONT_NAME, 18), state='hidden', tags="start_btn")
+                              font=(USED_FONT, 18), state='hidden', tags="start_btn")
 
 # --- HOVER LOGIC ---
 hover_states = {"start_btn": False, "multi": False}
