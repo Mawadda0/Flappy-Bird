@@ -4,7 +4,7 @@ from sys import exit
 import random
 
 #-------------------------------------#-------------------------------------#----------------------------
-# bird handler
+# 1. SETUP & CONFIG
 #-------------------------------------#-------------------------------------#----------------------------
 pygame.init()
 
@@ -16,6 +16,9 @@ pygame.display.set_caption("Bird")
 clock = pygame.time.Clock()
 FPS = 60
 
+#-------------------------------------#-------------------------------------#----------------------------
+# bird handler
+#-------------------------------------#-------------------------------------#----------------------------
 BIRD_SIZE = 80
 try:
     bird_image = pygame.image.load("./version_two/bird2.png").convert_alpha()
@@ -46,11 +49,9 @@ def update_bird(bird):
     
     bird.y += bird.speed_y
 
-    # --- NEW: CEILING BOUNDARY LOGIC ---
-    # If bird goes too high (y < 0), stop it at the top
     if bird.y < 0:
-        bird.y = 0            # Lock position to top edge
-        bird.speed_y = 0      # Stop upward momentum
+        bird.y = 0            
+        bird.speed_y = 0      
 
     angle = -bird.speed_y * 2
     rotated_bird = pygame.transform.rotate(bird_image, angle)
@@ -130,12 +131,10 @@ def create_pipes():
 # collision handler
 #-------------------------------------#-------------------------------------#----------------------------
 def check_collisions(bird_rect, pipes, floor_rect_y):
-    # 1. Check pipes
     for pipe in pipes:
         if bird_rect.colliderect(pipe):
             return True
             
-    # 2. Check floor ONLY (Top is handled in update_bird now)
     if bird_rect.bottom >= floor_rect_y:
         return True
         
@@ -206,8 +205,23 @@ class GameOver:
             return True
         return False
 
-# Initialize Game Over Screen
 game_over_screen = GameOver(WIDTH, HEIGHT)
+
+#-------------------------------------#-------------------------------------#----------------------------
+# BACKGROUND LOGIC (New Section)
+#-------------------------------------#-------------------------------------#----------------------------
+try:
+    bg_surface = pygame.image.load("background.jpeg").convert()
+    bg_surface = pygame.transform.scale(bg_surface, (WIDTH, HEIGHT))
+    has_background = True
+except FileNotFoundError:
+    print("background.jpeg not found. Using solid color.")
+    has_background = False
+
+# We use two variables to track the position of the two background copies
+bg_x1 = 0
+bg_x2 = WIDTH
+bg_speed = 1  # Speed of the background (should be slower than pipes)
 
 #-------------------------------------#-------------------------------------#----------------------------
 # main loop
@@ -218,8 +232,27 @@ game_active = True
 
 while running:
     clock.tick(FPS)
-    screen.fill((135, 206, 250))
+    
+    # 1. DRAW MOVING BACKGROUND
+    if has_background:
+        # Move backgrounds to the left
+        if game_active:
+            bg_x1 -= bg_speed
+            bg_x2 -= bg_speed
+        
+        # Reset position when they go off screen
+        if bg_x1 <= -WIDTH:
+            bg_x1 = WIDTH
+        if bg_x2 <= -WIDTH:
+            bg_x2 = WIDTH
+            
+        # Draw both copies
+        screen.blit(bg_surface, (bg_x1, 0))
+        screen.blit(bg_surface, (bg_x2, 0))
+    else:
+        screen.fill((135, 206, 250)) 
 
+    # 2. EVENT HANDLING
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -230,6 +263,9 @@ while running:
         if not game_active:
             if game_over_screen.check_for_restart(event):
                 score = reset_game()
+                # Reset background positions on restart so no gaps appear
+                bg_x1 = 0
+                bg_x2 = WIDTH
                 game_active = True
 
     draw_pipes()
