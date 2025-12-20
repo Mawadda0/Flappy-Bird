@@ -1,23 +1,53 @@
 import pygame
-import random
 import socket
-import threading
+import json
+import random
 import pickle
+import time
 
-#ports init
+# -------------------- NETWORK --------------------
 BROADCAST_PORT = 50000
 GAME_PORT = 50001
 
-server_ip = None
+server_addr = None
 seed = None
+game_started = False
+start_time = 0
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(("", BROADCAST_PORT))
+sock.setblocking(False)
 
 #search for host message that is broadcasted
 def find_host():
-    pass
+    global server_addr
+    try:
+        data, addr = sock.recvfrom(1024)
+        msg = json.loads(data.decode())
+        if msg["type"] == "DISCOVER":
+            server_addr = (addr[0], msg["port"])
+            print("[CLIENT] Server found:", server_addr)
+    except:
+        pass
 
 #waiting for the starting message from host
 def wait_for_start():
-    pass
+    global seed, game_started, start_time
+    try:
+        data, _ = sock.recvfrom(1024)
+        msg = json.loads(data.decode())
+
+        if msg["type"] == "START":
+            seed = msg["seed"]
+            start_time = msg["start_time"]
+            random.seed(seed)
+            game_started = True
+            print("[CLIENT] Game starting with seed:", seed)
+    except:
+        pass
+def send(msg):
+    if server_addr:
+        sock.sendto(json.dumps(msg).encode(), server_addr)
 
 def generate_client_pipes(client_socket, pipes_list, Pipe_Class, GAME_HEIGHT):
     # Receive the data (buffer size large enough for the list)

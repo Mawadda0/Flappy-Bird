@@ -67,7 +67,7 @@ FPS = 60
 #-------------------------------------#-------------------------------------#----------------------------
 BIRD_SIZE = 80
 try:
-    bird_image = pygame.image.load("./version_two/bird2.png").convert_alpha()
+    bird_image = pygame.image.load("./version_two/blue.png").convert_alpha()
     bird_image = pygame.transform.scale(bird_image, (BIRD_SIZE, BIRD_SIZE))
 except:
     bird_image = pygame.Surface((BIRD_SIZE, BIRD_SIZE))
