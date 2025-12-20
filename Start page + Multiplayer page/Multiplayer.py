@@ -124,7 +124,10 @@ def launch_game(script_name):
     global game_running
     if click_sound: click_sound.play()
     game_running = False
+    root.update()
+    pygame.time.delay(300) 
     root.destroy()
+    
     script_path = get_path(script_name)
     subprocess.Popen([sys.executable, script_path])
 

@@ -1,1 +1,0 @@
-root.attributes('-fullscreen', True)
