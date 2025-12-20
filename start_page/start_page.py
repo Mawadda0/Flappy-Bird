@@ -7,29 +7,36 @@ from PIL import Image, ImageTk
 import pygame 
 import ctypes
 
-# This finds the folder where this script is saved
+# --- DIRECTORY SETUP ---
+# BASE_DIR = The folder where THIS script is (start_page folder)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Get each file path
-def get_path(filename):
+# PARENT_DIR = The folder ABOVE (the PYTHON folder)
+# We need this because main.py and the 'pipes' folder are here
+PARENT_DIR = os.path.dirname(BASE_DIR)
+
+# Helper for start page specific assets (backgrounds, buttons)
+def get_start_page_path(filename):
     return os.path.join(BASE_DIR, filename)
 
 root = Tk()
 root.title("Flappy Bird Intro")
 root.attributes('-fullscreen', True)
 root.bind("<Escape>", lambda event: root.destroy())
-
+ 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
 # --- MUSIC SETUP ---
 pygame.mixer.init()
-# Dynamic paths for audio
-# Ensure these files exist in the folder shown in your screenshot
-pygame.mixer.music.load(get_path("start_page_sources/backgroundmp.mp3")) 
-pygame.mixer.music.play(-1) 
+# Dynamic paths for audio inside start_page_sources
+try:
+    pygame.mixer.music.load(get_start_page_path("start_page_sources/backgroundmp.mp3")) 
+    pygame.mixer.music.play(-1) 
+except pygame.error:
+    print("Background music not found, skipping.")
 
-click_sound_path = get_path("start_page_sources/Point.mp3")
+click_sound_path = get_start_page_path("start_page_sources/Point.mp3")
 if os.path.exists(click_sound_path):
     click_sound = pygame.mixer.Sound(click_sound_path) 
     click_sound.set_volume(1)
@@ -41,7 +48,7 @@ canvas = Canvas(root, highlightthickness=0, bg="skyblue")
 canvas.pack(fill="both", expand=True)
 
 # --- 1. CUSTOM FONT LOADER ---
-FONT_PATH = get_path("FSEX300.ttf") 
+FONT_PATH = get_start_page_path("FSEX300.ttf") 
 FONT_NAME = "Fixedsys Excelsior 301"
 USED_FONT = FONT_NAME
 
@@ -51,29 +58,33 @@ def load_custom_font(path):
         if sys.platform.startswith("win"):
             ctypes.windll.gdi32.AddFontResourceExW(path, 0x10, 0)
     else:
-        # Fallback if font file is missing
         print(f"Font not found at: {path}. Using Arial instead.")
         USED_FONT = "Arial"
 
 load_custom_font(FONT_PATH)
 
 # --- BACKGROUND ---
-# FIXED: Removed "./" to be cleaner, though os.path handles it fine
-bg_img = Image.open(get_path("start_page_sources/background.png")).resize((screen_width, screen_height), Image.LANCZOS)
-bg_photo = ImageTk.PhotoImage(bg_img)
-canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+try:
+    bg_img = Image.open(get_start_page_path("start_page_sources/background.png")).resize((screen_width, screen_height), Image.LANCZOS)
+    bg_photo = ImageTk.PhotoImage(bg_img)
+    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+except Exception as e:
+    print(f"Error loading background: {e}")
 
 # --- TITLE IMAGES ---
-# FIXED: Changed 'flappyword.png' to 'flappy.png' to match your folder
-flappy_img = Image.open(get_path("start_page_sources/flappy.png")).resize((350, 100), Image.NEAREST)
-flappy_photo = ImageTk.PhotoImage(flappy_img)
-id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50, image=flappy_photo, anchor="e", state='hidden')
+try:
+    flappy_img = Image.open(get_start_page_path("start_page_sources/flappy.png")).resize((350, 100), Image.NEAREST)
+    flappy_photo = ImageTk.PhotoImage(flappy_img)
+    id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50, image=flappy_photo, anchor="e", state='hidden')
 
-# NOTE: Your folder didn't show 'birdword.png', only 'bird.png'. 
-# I have pointed this to 'bird.png'. If you have a specific word image, put it in the folder and rename this back.
-bird_word_img = Image.open(get_path("start_page_sources/bird.png")).resize((250, 100), Image.NEAREST)
-bird_word_photo = ImageTk.PhotoImage(bird_word_img)
-id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50, image=bird_word_photo, anchor="w", state='hidden')
+    bird_word_img = Image.open(get_start_page_path("start_page_sources/bird.png")).resize((250, 100), Image.NEAREST)
+    bird_word_photo = ImageTk.PhotoImage(bird_word_img)
+    id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50, image=bird_word_photo, anchor="w", state='hidden')
+except Exception as e:
+    print(f"Error loading title images: {e}")
+    # Create placeholders so the loop doesn't crash
+    id_flappy = canvas.create_text(screen_width//2, screen_height//2 - 50, text="FLAPPY", font=(USED_FONT, 30))
+    id_bird_word = canvas.create_text(screen_width//2, screen_height//2, text="BIRD", font=(USED_FONT, 30))
 
 #--- Buttons ---
 btn_width = 220
@@ -97,7 +108,7 @@ def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
 
 btn_bg = create_rounded_rect(canvas, btn_start_x, btn_y, btn_width, btn_height, corner_radius=20,
                              fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="start_btn")
-# FIXED: Using USED_FONT variable so it doesn't crash if font file is missing
+
 btn_text = canvas.create_text(btn_start_x, btn_y, text="START GAME", fill="white",
                               font=(USED_FONT, 18), state='hidden', tags="start_btn")
 
@@ -132,8 +143,8 @@ def check_hover(event):
 
 canvas.bind('<Motion>', check_hover)
 
-# --- NAVIGATION LOGIC ---
-def launch_game(script_name):
+# --- NAVIGATION LOGIC (FIXED) ---
+def launch_game(script_relative_path):
     global game_running
     if click_sound: click_sound.play()
     game_running = False
@@ -141,25 +152,32 @@ def launch_game(script_name):
     pygame.time.delay(300) 
     root.destroy()
     
-    script_path = get_path(script_name)
-    subprocess.Popen([sys.executable, script_path])
+    # Locate the script in the PARENT folder (PYTHON/)
+    script_path = os.path.join(PARENT_DIR, script_relative_path)
+    
+    # Run from PARENT_DIR so the game can find 'pipes', 'sound', etc.
+    subprocess.Popen([sys.executable, script_path], cwd=PARENT_DIR)
 
-canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("start.py"))  
-canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer.py"))
+# FIXED: Pointing to main.py and multiplayer/client.py
+canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))  
+canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer/client.py"))
 
 # --- PIPE & BIRD ---
-# FIXED: Added 'start_page_sources/' to path
-pipe_img = Image.open(get_path("start_page_sources/pipe.png")).resize((650, 850), Image.LANCZOS)
-pipe_photo = ImageTk.PhotoImage(pipe_img)
-pipe_x = screen_width - 180
-pipe_target_y, pipe_current_y = -200, -600
-pipe_id = canvas.create_image(pipe_x, pipe_current_y, image=pipe_photo, anchor="n")
+try:
+    pipe_img = Image.open(get_start_page_path("start_page_sources/pipe.png")).resize((650, 850), Image.LANCZOS)
+    pipe_photo = ImageTk.PhotoImage(pipe_img)
+    pipe_x = screen_width - 180
+    pipe_target_y, pipe_current_y = -200, -600
+    pipe_id = canvas.create_image(pipe_x, pipe_current_y, image=pipe_photo, anchor="n")
 
-# FIXED: Added 'start_page_sources/' to path
-bird_raw_img = Image.open(get_path("start_page_sources/bird22.png")).resize((200, 200), Image.LANCZOS)
-bird_photo = ImageTk.PhotoImage(bird_raw_img)
-x, base_y = 0, screen_height // 4
-bird_id = canvas.create_image(x, base_y, image=bird_photo)
+    bird_raw_img = Image.open(get_start_page_path("start_page_sources/bird22.png")).resize((200, 200), Image.LANCZOS)
+    bird_photo = ImageTk.PhotoImage(bird_raw_img)
+    x, base_y = 0, screen_height // 4
+    bird_id = canvas.create_image(x, base_y, image=bird_photo)
+except Exception as e:
+    print(f"Error loading animation assets: {e}")
+    # Set flags to stop animation if images fail
+    game_running = False
 
 sway_position = 0
 is_retreating = False

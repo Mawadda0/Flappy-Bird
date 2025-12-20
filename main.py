@@ -200,6 +200,18 @@ class GameOver:
         screen.blit(score_text, score_rect)
         screen.blit(restart_text, restart_rect)
 
+    # --- ADDED THIS METHOD ---
+    def draw_start_screen(self, screen):
+        title_text = self.large_font.render("GET READY", True, self.GOLD)
+        title_rect = title_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 50))
+        
+        start_text = self.small_font.render("Press SPACE to Start", True, self.WHITE)
+        start_rect = start_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 50))
+        
+        screen.blit(title_text, title_rect)
+        screen.blit(start_text, start_rect)
+    # -------------------------
+
     def check_for_restart(self, event):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             return True
@@ -274,7 +286,8 @@ def sound_game_over_stop():
 #-------------------------------------#-------------------------------------#----------------------------
 
 running = True
-game_active = True 
+game_active = False   # CHANGED: Start as False
+waiting_for_start = True # CHANGED: New variable to control the start screen
 
 while running:
     clock.tick(FPS)
@@ -282,7 +295,7 @@ while running:
     # 1. DRAW MOVING BACKGROUND
     if has_background:
         # Move backgrounds to the left
-        if game_active:
+        if game_active and not waiting_for_start: # CHANGED: Only move if playing
             bg_x1 -= bg_speed
             bg_x2 -= bg_speed
         
@@ -306,21 +319,36 @@ while running:
         if game_active and event.type==pipes_timer:
             create_pipes()
         
-        if not game_active:
+        # --- CHANGED: START SCREEN LOGIC ---
+        if waiting_for_start:
+             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                 waiting_for_start = False
+                 game_active = True
+                 bird.speed_y = jump_strength # Optional: small hop on start
+                 sound_flap_play()
+        # -----------------------------------
+        elif not game_active:
             if game_over_screen.check_for_restart(event):
                 score = reset_game()
                 # Reset background positions on restart so no gaps appear
                 bg_x1 = 0
                 bg_x2 = WIDTH
                 game_active = True
+    
+    # Only draw pipes if we are not on the start screen
+    if not waiting_for_start:
+        draw_pipes()
 
-    draw_pipes()
-
-    if game_active:
+    if waiting_for_start:
+        # --- CHANGED: DRAW START SCREEN ---
+        # Draw bird at center (no movement)
+        screen.blit(bird_image, (bird.x, bird.y))
+        game_over_screen.draw_start_screen(screen)
+        # ----------------------------------
+    elif game_active:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             jump_bird(bird)
-
 
         update_bird(bird)
         move_pipes()
