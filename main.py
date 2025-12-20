@@ -59,6 +59,14 @@ def get_bird_hitbox(bird):
 TOP = True
 BOTTOM = False
 
+def reset_game():
+    bird.y = HEIGHT / 2
+    bird.speed_y = 0
+
+    pipes.clear()
+
+    return 0  # score
+
 class Pipe(pygame.Rect):
     def __init__(self,pos):
         pygame.Rect.__init__(self, pipe_x, pipe_y, pipe_width, pipe_height)
@@ -180,7 +188,8 @@ while running:
 
     if check_collisions(bird_hitbox, pipes, HEIGHT):
         print("LOSER")
-        running = False
+        pygame.time.delay(1000)
+        score = reset_game()
 
     score = check_score(bird_hitbox, pipes, score)
     draw_score(screen, score, WIDTH)
