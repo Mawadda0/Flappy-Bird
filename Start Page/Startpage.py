@@ -38,8 +38,9 @@ FONT_PATH = get_path("FSEX300.ttf")
 FONT_NAME = "Fixedsys Excelsior 301"
 
 def load_custom_font(path):
-    if os.path.exists(path):
-        ctypes.windll.gdi32.AddFontResourceExW(path, 0x10, 0)
+    if sys.platform.startswith("win"):
+     import ctypes
+     ctypes.windll.shcore.SetProcessDpiAwareness(1)
     else:
         print(f"Font not found at: {path}")
 
