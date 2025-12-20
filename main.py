@@ -180,8 +180,8 @@ class GameOver:
         self.GOLD = (255, 215, 0)
 
         try:
-            self.large_font = pygame.font.Font("pixel.ttf", 60)
-            self.small_font = pygame.font.Font("pixel.ttf", 30)
+            self.large_font = pygame.font.Font("./pixel.TTF", 60)
+            self.small_font = pygame.font.Font("./pixel.TTF", 30)
         except FileNotFoundError:
             self.large_font = pygame.font.SysFont('Arial', 60, bold=True)
             self.small_font = pygame.font.SysFont('Arial', 40)
@@ -222,6 +222,52 @@ except FileNotFoundError:
 bg_x1 = 0
 bg_x2 = WIDTH
 bg_speed = 1  # Speed of the background (should be slower than pipes)
+
+
+
+
+#-------------------------------------#-------------------------------------#----------------------------
+# sound handler
+#-------------------------------------#-------------------------------------#----------------------------
+pygame.mixer.init()
+
+
+flap_sound = pygame.mixer.Sound("./sound/flap.mp3")
+hit_sound = pygame.mixer.Sound("./sound/hit.mp3")
+score_sound = pygame.mixer.Sound("./sound/score.mp3")
+game_over_sound = pygame.mixer.Sound("./sound/gameover.mp3")
+
+
+flap_sound.set_volume(1)
+hit_sound.set_volume(0.5)
+score_sound.set_volume(0.5)
+game_over_sound.set_volume(0.5)
+
+def sound_flap_play():
+    flap_sound.play()
+
+def sound_hit_play():
+    hit_sound.play()
+
+def sound_score_play():
+    score_sound.play()
+
+def sound_game_over_play():
+    game_over_sound.play()
+
+
+def flap_stop():
+    flap_sound.stop()
+
+
+def sound_hit_stop():
+    hit_sound.stop()
+
+def sound_score_stop():
+    score_sound.stop()
+
+def sound_game_over_stop():
+    game_over_sound.stop()
 
 #-------------------------------------#-------------------------------------#----------------------------
 # main loop
@@ -275,14 +321,23 @@ while running:
         if keys[pygame.K_SPACE]:
             jump_bird(bird)
 
+
         update_bird(bird)
         move_pipes()
         
         bird_hitbox = get_bird_hitbox(bird)
-        score = check_score(bird_hitbox, pipes, score)
+        new_score = check_score(bird_hitbox, pipes, score)
+        if (new_score > score):
+            score = new_score
+            sound_score_play()
+            
         draw_score(screen, score, WIDTH)
 
+        # pygame.draw.rect(screen, (255, 255, 255), bird_hitbox)
+
         if check_collisions(bird_hitbox, pipes, HEIGHT):
+            sound_hit_play()
+            sound_game_over_play()
             game_active = False
             
     else:
@@ -294,5 +349,4 @@ while running:
         game_over_screen.draw(screen, score)
 
     pygame.display.update()
-
 pygame.quit()
