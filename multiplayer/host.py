@@ -14,12 +14,22 @@ clients = set()
 seed = random.randint(0, 999999)
 #the host init for broadcasting message
 def broadcast_host():
-  pass
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    while True:
+        s.sendto(BROADCAST_MSG, ("255.255.255.255", BROADCAST_PORT))
+        time.sleep(1)
 #waiting for the messages from the client
 def udp_listener():
-      pass
-
- 
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(("", GAME_PORT))
+    while True:
+        data, addr = s.recvfrom(1024)
+        if data == b"FLAP":
+            print("FLAP from", addr)
+        elif data == b"JOIN":
+            clients.add(addr)
+            s.sendto(f"{START_MSG.decode()}:{seed}".encode(), addr)
 
 def send_map_coordinates(client_socket):
     # Constants from main.py used for generation
