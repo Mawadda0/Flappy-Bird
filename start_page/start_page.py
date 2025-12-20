@@ -73,11 +73,11 @@ except Exception as e:
 
 # --- TITLE IMAGES ---
 try:
-    flappy_img = Image.open(get_start_page_path("start_page_sources/flappy.png")).resize((350, 100), Image.NEAREST)
+    flappy_img = Image.open(get_start_page_path("start_page_sources/flappyword.png")).resize((350, 100), Image.NEAREST)
     flappy_photo = ImageTk.PhotoImage(flappy_img)
     id_flappy = canvas.create_image((screen_width//1.9) - 10, screen_height//2.2 - 50, image=flappy_photo, anchor="e", state='hidden')
 
-    bird_word_img = Image.open(get_start_page_path("start_page_sources/bird.png")).resize((250, 100), Image.NEAREST)
+    bird_word_img = Image.open(get_start_page_path("start_page_sources/birdword.png")).resize((250, 100), Image.NEAREST)
     bird_word_photo = ImageTk.PhotoImage(bird_word_img)
     id_bird_word = canvas.create_image((screen_width//1.9) + 10, screen_height//2.2 - 50, image=bird_word_photo, anchor="w", state='hidden')
 except Exception as e:
@@ -89,11 +89,8 @@ except Exception as e:
 #--- Buttons ---
 btn_width = 220
 btn_height = 60
-btn_y = screen_height // 2.3 + 100
-gap = 40
-
-btn_start_x = (screen_width // 2) - (btn_width // 2) - (gap // 2)
-btn_multi_x = (screen_width // 2) + (btn_width // 2) + (gap // 2)
+btn_y = screen_height // 2 + 50
+btn_start_x = screen_width // 2
 
 def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
     x1, y1 = x - w//2, y - h//2
@@ -112,18 +109,13 @@ btn_bg = create_rounded_rect(canvas, btn_start_x, btn_y, btn_width, btn_height, 
 btn_text = canvas.create_text(btn_start_x, btn_y, text="START GAME", fill="white",
                               font=(USED_FONT, 18), state='hidden', tags="start_btn")
 
-btn_multi_bg = create_rounded_rect(canvas, btn_multi_x, btn_y, btn_width, btn_height, corner_radius=20,
-                             fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="multi")
-btn_multi_text = canvas.create_text(btn_multi_x, btn_y, text="MULTIPLAYER", fill="white",
-                              font=(USED_FONT, 18), state='hidden', tags="multi")
-
 # --- HOVER LOGIC ---
-hover_states = {"start_btn": False, "multi": False}
+hover_states = {"start_btn": False}
 game_running = True
 
 def check_hover(event):
     if not game_running: return
-    buttons = [("start_btn", btn_start_x, btn_y), ("multi", btn_multi_x, btn_y)]
+    buttons = [("start_btn", btn_start_x, btn_y)]
     any_hovered = False
     for tag, bx, by in buttons:
         if canvas.itemcget(tag, "state") != 'normal': continue
@@ -143,7 +135,7 @@ def check_hover(event):
 
 canvas.bind('<Motion>', check_hover)
 
-# --- NAVIGATION LOGIC (FIXED) ---
+# --- NAVIGATION LOGIC ---
 def launch_game(script_relative_path):
     global game_running
     if click_sound: click_sound.play()
@@ -158,9 +150,8 @@ def launch_game(script_relative_path):
     # Run from PARENT_DIR so the game can find 'pipes', 'sound', etc.
     subprocess.Popen([sys.executable, script_path], cwd=PARENT_DIR)
 
-# FIXED: Pointing to main.py and multiplayer/client.py
-canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))  
-canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer/client.py"))
+# FIXED: Pointing to main.py
+canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))   #We will add the file here
 
 # --- PIPE & BIRD ---
 try:
@@ -201,9 +192,7 @@ def move():
         canvas.itemconfig(id_flappy, state='normal')
         canvas.itemconfig(id_bird_word, state='normal')
         canvas.itemconfig("start_btn", state='normal')
-        canvas.itemconfig("multi", state='normal') 
         canvas.lift("start_btn")
-        canvas.lift("multi") 
         canvas.lift(bird_id)
     elif is_retreating:
         x -= 10
