@@ -2,8 +2,49 @@
 A project of a flappy bird made using python and pygame
 
 ---
+### Project Description
 
-##  The Team
+This is a Flappy Bird game developed using Python.
+The project focuses on game development, code organization, and using multiple libraries together.
+The game is currently Single Player, with plans to add Multiplayer mode in the future.
+
+---
+
+### Libraries Used
+
+* Tkinter
+
+* Pygame
+  
+* PIL
+
+* Math
+
+* Ctypes
+
+* Sys
+
+* Pickle
+
+### Project Structure
+
+The project is divided into the following parts:
+
+- **Bird** – bird movement and gravity.
+
+- **Collision** – collision detection.
+
+- **Pipes** – pipe generation and movement.
+
+- **Sounds** – game sound effects.
+
+- **Score** – score handling.
+
+- **Main** – runs and connects the whole game.
+
+---
+
+### The Team
 This project was developed by :
 
 | Name | Role | Profile |
