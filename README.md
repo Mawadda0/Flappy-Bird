@@ -132,9 +132,11 @@ Score tracking and persistence:
 
 #### 🎨 **Start Page Module**
 Entry point and main menu:
-- Game entry point with welcoming interface
+- **Game entry point** - Run this to start the application
 - Animated start screen with visual effects
-- "Start Game" button and menu navigation
+- "Start Game" button to launch single-player mode
+- Menu navigation for game mode selection
+- Multiplayer mode button (will be available when multiplayer is complete)
 - Title display with custom pixel font
 - Smooth transitions to gameplay
 - Initial game state setup
@@ -180,8 +182,9 @@ pip install pygame pillow
 
 3. **Run the game**
 ```bash
-python main.py
+python start_page/start_page.py
 ```
+This will launch the start menu where you can choose to play single-player or multiplayer mode (when available).
 
 ### Optional: Create a Virtual Environment
 
