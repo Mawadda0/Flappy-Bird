@@ -12,10 +12,9 @@ import ctypes
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # PARENT_DIR = The folder ABOVE (the PYTHON folder)
-# We need this because main.py and the 'pipes' folder are here
 PARENT_DIR = os.path.dirname(BASE_DIR)
 
-# Helper for start page specific assets (backgrounds, buttons)
+# Helper for start page specific assets
 def get_start_page_path(filename):
     return os.path.join(BASE_DIR, filename)
 
@@ -29,7 +28,6 @@ screen_height = root.winfo_screenheight()
 
 # --- MUSIC SETUP ---
 pygame.mixer.init()
-# Dynamic paths for audio inside start_page_sources
 try:
     pygame.mixer.music.load(get_start_page_path("start_page_sources/backgroundmp.mp3")) 
     pygame.mixer.music.play(-1) 
@@ -86,14 +84,17 @@ except Exception as e:
     id_flappy = canvas.create_text(screen_width//2, screen_height//2 - 50, text="FLAPPY", font=(USED_FONT, 30))
     id_bird_word = canvas.create_text(screen_width//2, screen_height//2, text="BIRD", font=(USED_FONT, 30))
 
-#--- Buttons ---
+# --- BUTTONS ---
 btn_width = 220
 btn_height = 60
 btn_y = screen_height // 2.3 + 100
 gap = 40
 
-btn_start_x = (screen_width // 2) - (btn_width // 2) - (gap // 2)
-btn_multi_x = (screen_width // 2) + (btn_width // 2) + (gap // 2)
+# --- MODIFIED: Centered Start Button ---
+btn_start_x = screen_width // 2
+
+# --- MULTIPLAYER COORDINATES (Commented out) ---
+# btn_multi_x = (screen_width // 2) + (btn_width // 2) + (gap // 2)
 
 def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
     x1, y1 = x - w//2, y - h//2
@@ -106,16 +107,18 @@ def create_rounded_rect(canvas, x, y, w, h, corner_radius, **kwargs):
     )
     return canvas.create_polygon(points, smooth=True, **kwargs)
 
+# START BUTTON
 btn_bg = create_rounded_rect(canvas, btn_start_x, btn_y, btn_width, btn_height, corner_radius=20,
                              fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="start_btn")
 
 btn_text = canvas.create_text(btn_start_x, btn_y, text="START GAME", fill="white",
                               font=(USED_FONT, 18), state='hidden', tags="start_btn")
 
-btn_multi_bg = create_rounded_rect(canvas, btn_multi_x, btn_y, btn_width, btn_height, corner_radius=20,
-                             fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="multi")
-btn_multi_text = canvas.create_text(btn_multi_x, btn_y, text="MULTIPLAYER", fill="white",
-                              font=(USED_FONT, 18), state='hidden', tags="multi")
+# --- MULTIPLAYER BUTTON (Commented out for later use) ---
+# btn_multi_bg = create_rounded_rect(canvas, btn_multi_x, btn_y, btn_width, btn_height, corner_radius=20,
+#                              fill="#fcbe2e", outline="#e08021", width=5, state='hidden', tags="multi")
+# btn_multi_text = canvas.create_text(btn_multi_x, btn_y, text="MULTIPLAYER", fill="white",
+#                              font=(USED_FONT, 18), state='hidden', tags="multi")
 
 # --- HOVER LOGIC ---
 hover_states = {"start_btn": False, "multi": False}
@@ -123,7 +126,11 @@ game_running = True
 
 def check_hover(event):
     if not game_running: return
-    buttons = [("start_btn", btn_start_x, btn_y), ("multi", btn_multi_x, btn_y)]
+    
+    # --- MODIFIED: Removed "multi" from check list temporarily ---
+    buttons = [("start_btn", btn_start_x, btn_y)]
+    # buttons = [("start_btn", btn_start_x, btn_y), ("multi", btn_multi_x, btn_y)] # OLD VERSION
+    
     any_hovered = False
     for tag, bx, by in buttons:
         if canvas.itemcget(tag, "state") != 'normal': continue
@@ -143,7 +150,7 @@ def check_hover(event):
 
 canvas.bind('<Motion>', check_hover)
 
-# --- NAVIGATION LOGIC (FIXED) ---
+# --- NAVIGATION LOGIC ---
 def launch_game(script_relative_path):
     global game_running
     if click_sound: click_sound.play()
@@ -158,9 +165,8 @@ def launch_game(script_relative_path):
     # Run from PARENT_DIR so the game can find 'pipes', 'sound', etc.
     subprocess.Popen([sys.executable, script_path], cwd=PARENT_DIR)
 
-# FIXED: Pointing to main.py and multiplayer/client.py
 canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))  
-canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer/client.py"))
+# canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer/client.py"))
 
 # --- PIPE & BIRD ---
 try:
@@ -176,7 +182,6 @@ try:
     bird_id = canvas.create_image(x, base_y, image=bird_photo)
 except Exception as e:
     print(f"Error loading animation assets: {e}")
-    # Set flags to stop animation if images fail
     game_running = False
 
 sway_position = 0
@@ -201,9 +206,12 @@ def move():
         canvas.itemconfig(id_flappy, state='normal')
         canvas.itemconfig(id_bird_word, state='normal')
         canvas.itemconfig("start_btn", state='normal')
-        canvas.itemconfig("multi", state='normal') 
+        
+        # --- MODIFIED: Commented out Multiplayer reveal ---
+        # canvas.itemconfig("multi", state='normal') 
+        
         canvas.lift("start_btn")
-        canvas.lift("multi") 
+        # canvas.lift("multi") 
         canvas.lift(bird_id)
     elif is_retreating:
         x -= 10
