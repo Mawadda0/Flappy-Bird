@@ -16,10 +16,8 @@ A fully-featured Flappy Bird clone developed in Python using Pygame and other po
 - [Project Architecture](#project-architecture)
 - [Getting Started](#getting-started)
 - [How to Play](#how-to-play)
-- [Development Roadmap](#development-roadmap)
 - [Contributing](#contributing)
 - [The Team](#the-team)
-- [License](#license)
 
 ---
 
@@ -131,6 +129,24 @@ Score tracking and persistence:
 - High score saving using pickle serialization
 - Score calculation based on passed obstacles
 - End-game score presentation
+
+#### 🎨 **Start Page Module**
+Entry point and main menu:
+- Game entry point with welcoming interface
+- Animated start screen with visual effects
+- "Start Game" button and menu navigation
+- Title display with custom pixel font
+- Smooth transitions to gameplay
+- Initial game state setup
+
+#### 🎨 **Start Page Module**
+Entry point and main menu:
+- Game entry point with welcoming interface
+- Animated start screen with visual effects
+- "Start Game" button and menu navigation
+- Title display with custom pixel font
+- Smooth transitions to gameplay
+- Initial game state setup
 
 #### 🎯 **Main Module**
 Core game controller:
@@ -316,10 +332,6 @@ This project is the result of collaborative effort by a talented team of develop
 
 ---
 
-
-
-
-
 ## 🙏 Acknowledgments
 
 - Original Flappy Bird concept by Dong Nguyen
@@ -333,6 +345,6 @@ This project is the result of collaborative effort by a talented team of develop
 
 **⭐ If you like this project, please give it a star on GitHub! ⭐**
 
-Made with ❤️ by Us, we didn't name our team yet, so let it be us for now 
+Made with ❤️ by Us, we didn't name our team yet, so let it be us for now
 
 </div>
