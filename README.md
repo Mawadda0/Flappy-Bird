@@ -33,7 +33,7 @@ This is a modern recreation of the classic **Flappy Bird** game, built entirely 
 
 ---
 
-## ✨ Features
+# ✨ Features
 
 ### Current Features
 - ✅ **Smooth Gameplay**: 60 FPS game loop with responsive controls
