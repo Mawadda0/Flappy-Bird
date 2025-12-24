@@ -324,7 +324,7 @@ This project is the result of collaborative effort by a talented team of develop
 | Name | Role | GitHub Profile |
 |------|------|----------------|
 | **Mohanad Galmad** | Developer | [@hondagalmad](https://github.com/hondagalmad) |
-| **Mohanad Alsayed** | Developer | [@Mawadda0](https://github.com/Mawadda0) |
+| **Mohanad Alsayed** | Developer | [@M0nnd](https://github.com/M0nnd) |
 | **Moaz Ibrahim** | Developer | [@m0ozaa](https://github.com/m0ozaa) |
 | **Moaz Waleed** | Developer | [@Moza202](https://github.com/Moza202) |
 | **Moaz Karam** | Developer | [@moaz-karam](https://github.com/moaz-karam) |
