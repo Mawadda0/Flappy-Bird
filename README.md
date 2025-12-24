@@ -8,7 +8,7 @@ A fully-featured Flappy Bird clone developed in Python using Pygame and other po
 
 ---
 
-## 📋 Table of Contents
+# 📋 Table of Contents
 
 - [About the Project](#about-the-project)
 - [Features](#features)
