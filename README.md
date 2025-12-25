@@ -5,19 +5,19 @@ A fully-featured Flappy Bird clone developed in Python using Pygame and other po
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
 [![Pygame](https://img.shields.io/badge/Pygame-2.x-green.svg)](https://www.pygame.org/)
 
-
 ---
 
 # 📋 Table of Contents
 
-- [About the Project](#about-the-project)
-- [Features](#features)
-- [Technologies & Libraries](#technologies--libraries)
-- [Project Architecture](#project-architecture)
-- [Getting Started](#getting-started)
-- [How to Play](#how-to-play)
-- [Contributing](#contributing)
-- [The Team](#the-team)
+- [About the Project](#-about-the-project)
+- [Features](#-features)
+- [Technologies & Libraries](#️-technologies--libraries)
+- [Project Architecture](#️-project-architecture)
+- [Getting Started](#-getting-started)
+- [How to Play](#-how-to-play)
+- [Contributing](#-contributing)
+- [The Team](#-the-team)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 
@@ -96,67 +96,25 @@ Flappy-Bird/
 ### Component Breakdown
 
 #### 🐦 **Bird Module**
-Handles all bird-related functionality:
-- Bird sprite rendering and animation
-- Gravity simulation and jumping mechanics
-- Bird state management (flying, falling, dead)
-- Position and velocity calculations
+Handles all bird-related functionality including sprite rendering and animation, gravity simulation and jumping mechanics, bird state management, and position and velocity calculations.
 
 #### 💥 **Collision Module**
-Manages collision detection:
-- Hitbox calculations for bird, pipes, ground, and ceiling
-- Pixel-perfect collision detection algorithms
-- Game-over state triggering
-- Boundary checking
+Manages collision detection with hitbox calculations for bird, pipes, ground, and ceiling, pixel-perfect collision detection algorithms, game-over state triggering, and boundary checking.
 
 #### 🔧 **Pipes Module**
-Controls obstacle generation:
-- Random pipe pair generation with configurable gaps
-- Horizontal scrolling mechanics
-- Pipe recycling for memory efficiency
-- Difficulty scaling based on score
+Controls obstacle generation through random pipe pair generation with configurable gaps, horizontal scrolling mechanics, pipe recycling for memory efficiency, and difficulty scaling based on score.
 
 #### 🔊 **Sounds Module**
-Audio management system:
-- Sound effect playback (wing flap, collision, scoring)
-- Background music looping
-- Volume control
-- Audio channel management
+Audio management system featuring sound effect playback (wing flap, collision, scoring), background music looping, volume control, and audio channel management.
 
 #### 📊 **Score Module**
-Score tracking and persistence:
-- Real-time score display during gameplay
-- High score saving using pickle serialization
-- Score calculation based on passed obstacles
-- End-game score presentation
+Score tracking and persistence with real-time score display during gameplay, high score saving using pickle serialization, score calculation based on passed obstacles, and end-game score presentation.
 
 #### 🎨 **Start Page Module**
-Entry point and main menu:
-- **Game entry point** - Run this to start the application
-- Animated start screen with visual effects
-- "Start Game" button to launch single-player mode
-- Menu navigation for game mode selection
-- Multiplayer mode button (will be available when multiplayer is complete)
-- Title display with custom pixel font
-- Smooth transitions to gameplay
-- Initial game state setup
-
-#### 🎨 **Start Page Module**
-Entry point and main menu:
-- Game entry point with welcoming interface
-- Animated start screen with visual effects
-- "Start Game" button and menu navigation
-- Title display with custom pixel font
-- Smooth transitions to gameplay
-- Initial game state setup
+Entry point and main menu serving as the game entry point (run this to start the application), featuring an animated start screen with visual effects, "Start Game" button to launch single-player mode, menu navigation for game mode selection, multiplayer mode button (available when multiplayer is complete), title display with custom pixel font, smooth transitions to gameplay, and initial game state setup.
 
 #### 🎯 **Main Module**
-Core game controller:
-- Initializes Pygame and game components
-- Manages the main game loop (update, render, events)
-- Coordinates interactions between all modules
-- Handles game states (menu, playing, game over)
-- Frame rate management and timing
+Core game controller that initializes Pygame and game components, manages the main game loop (update, render, events), coordinates interactions between all modules, handles game states (menu, playing, game over), and manages frame rate and timing.
 
 ---
 
