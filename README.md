@@ -167,7 +167,7 @@ pip install pygame pillow
 ## 🎮 How to Play
 
 ### Controls
-- **SPACE** or **UP ARROW**: Make the bird flap/jump
+- **SPACE** or **UP ARROW** or **W BUTTON**: Make the bird flap/jump
 - **ESC**: Pause game or return to menu
 
 ### Objective
