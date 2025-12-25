@@ -193,7 +193,7 @@ class GameOver:
         score_text = self.large_font.render(f"Score: {int(final_score)}", True, self.GOLD)
         score_rect = score_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
 
-        restart_text = self.small_font.render("Press SPACE to Restart", True, self.WHITE)
+        restart_text = self.small_font.render("Press SPACE or UP or W to Restart", True, self.WHITE)
         restart_rect = restart_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 60))
 
         screen.blit(game_over_text, game_over_rect)
@@ -205,7 +205,7 @@ class GameOver:
         title_text = self.large_font.render("GET READY", True, self.GOLD)
         title_rect = title_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 50))
         
-        start_text = self.small_font.render("Press SPACE to Start", True, self.WHITE)
+        start_text = self.small_font.render("Press SPACE or UP or W to Start", True, self.WHITE)
         start_rect = start_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 50))
         
         screen.blit(title_text, title_rect)
@@ -213,8 +213,10 @@ class GameOver:
     # -------------------------
 
     def check_for_restart(self, event):
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            return True
+        if event.type == pygame.KEYDOWN:
+            
+            if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
+                return True
         return False
 
 game_over_screen = GameOver(WIDTH, HEIGHT)
@@ -319,13 +321,15 @@ while running:
         if game_active and event.type==pipes_timer:
             create_pipes()
         
-        # --- CHANGED: START SCREEN LOGIC ---
+       
         if waiting_for_start:
-             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                 waiting_for_start = False
-                 game_active = True
-                 bird.speed_y = jump_strength # Optional: small hop on start
-                 sound_flap_play()
+            
+             if event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
+                     waiting_for_start = False
+                     game_active = True
+                     bird.speed_y = jump_strength
+                     sound_flap_play()
         # -----------------------------------
         elif not game_active:
             if game_over_screen.check_for_restart(event):
@@ -347,7 +351,7 @@ while running:
         # ----------------------------------
     elif game_active:
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]:
             jump_bird(bird)
 
         update_bird(bird)
