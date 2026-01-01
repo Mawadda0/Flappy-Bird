@@ -1,3 +1,6 @@
+import os
+import subprocess
+import sys
 import pygame
 import math
 from sys import exit
@@ -167,6 +170,83 @@ def draw_score(screen, score, width):
 def reset_score():
     return 0
 
+
+#-------------------------------------#-------------------------------------#----------------------------
+# PAUSE MENU CLASS (UPDATED)
+#-------------------------------------#-------------------------------------#----------------------------
+class PauseMenu:
+    def __init__(self, screen_width, screen_height):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        
+        # --- 1. USE LOCAL FONT & INCREASE SIZE ---
+        try:
+            self.font = pygame.font.Font("pixel.ttf", 50) # Increased size
+        except Exception as e:
+            print(f"Warning: pixel.ttf not found ({e}). Using Arial.")
+            self.font = pygame.font.SysFont('Arial', 50, bold=True)
+            
+        # Colors
+        self.WHITE = (255, 255, 255)
+        self.ORANGE = (252, 190, 46)
+        
+        # --- 2. BIGGER BUTTON DIMENSIONS ---
+        btn_width = 300  # Wider
+        btn_height = 70  # Taller
+        gap = 100        # More space between buttons
+        
+        cx, cy = screen_width // 2, screen_height // 2
+        
+        # Define Rectangles using center coordinates
+        self.btn_continue = pygame.Rect(0, 0, btn_width, btn_height)
+        self.btn_continue.center = (cx, cy - gap) # Move Up
+
+        self.btn_restart = pygame.Rect(0, 0, btn_width, btn_height)
+        self.btn_restart.center = (cx, cy)        # Center
+
+        self.btn_menu = pygame.Rect(0, 0, btn_width, btn_height)
+        self.btn_menu.center = (cx, cy + gap)     # Move Down
+
+    def draw(self, screen):
+        # 1. Semi-Transparent Overlay
+        overlay = pygame.Surface((self.screen_width, self.screen_height))
+        overlay.set_alpha(150) # Slightly darker for better contrast
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+
+        # 2. "PAUSED" Title
+        title_surf = self.font.render("PAUSED", True, self.WHITE)
+        # Position title slightly higher than buttons
+        title_rect = title_surf.get_rect(center=(self.screen_width//2, self.screen_height//2 - 200))
+        screen.blit(title_surf, title_rect)
+
+        # 3. Draw Buttons
+        self._draw_button(screen, self.btn_continue, "Continue")
+        self._draw_button(screen, self.btn_restart, "Restart")
+        self._draw_button(screen, self.btn_menu, "Main Menu")
+
+    def _draw_button(self, screen, rect, text):
+        # Draw filled box
+        pygame.draw.rect(screen, self.ORANGE, rect, border_radius=15)
+        # Draw thick border
+        pygame.draw.rect(screen, self.WHITE, rect, 4, border_radius=15)
+        
+        # Draw text centered
+        txt_surf = self.font.render(text, True, self.WHITE)
+        txt_rect = txt_surf.get_rect(center=rect.center)
+        screen.blit(txt_surf, txt_rect)
+
+    def handle_click(self, pos):
+        if self.btn_continue.collidepoint(pos):
+            return "continue"
+        if self.btn_restart.collidepoint(pos):
+            return "restart"
+        if self.btn_menu.collidepoint(pos):
+            return "menu"
+        return None
+
+pause_menu = PauseMenu(WIDTH, HEIGHT)
+
 #-------------------------------------#-------------------------------------#----------------------------
 # GAME OVER CLASS
 #-------------------------------------#-------------------------------------#----------------------------
@@ -282,32 +362,28 @@ def sound_score_stop():
 
 def sound_game_over_stop():
     game_over_sound.stop()
-
 #-------------------------------------#-------------------------------------#----------------------------
-# main loop
+# MAIN LOOP (UPDATED)
 #-------------------------------------#-------------------------------------#----------------------------
 
 running = True
-game_active = False   # CHANGED: Start as False
-waiting_for_start = True # CHANGED: New variable to control the start screen
+game_active = False   
+waiting_for_start = True 
+game_paused = False # <--- NEW VARIABLE
 
 while running:
     clock.tick(FPS)
     
-    # 1. DRAW MOVING BACKGROUND
+    # 1. DRAW BACKGROUND (Always draw background first)
     if has_background:
-        # Move backgrounds to the left
-        if game_active and not waiting_for_start: # CHANGED: Only move if playing
+        # Only move background if game is active AND not paused
+        if game_active and not waiting_for_start and not game_paused: 
             bg_x1 -= bg_speed
             bg_x2 -= bg_speed
         
-        # Reset position when they go off screen
-        if bg_x1 <= -WIDTH:
-            bg_x1 = WIDTH
-        if bg_x2 <= -WIDTH:
-            bg_x2 = WIDTH
+        if bg_x1 <= -WIDTH: bg_x1 = WIDTH
+        if bg_x2 <= -WIDTH: bg_x2 = WIDTH
             
-        # Draw both copies
         screen.blit(bg_surface, (bg_x1, 0))
         screen.blit(bg_surface, (bg_x2, 0))
     else:
@@ -318,67 +394,99 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        if game_active and event.type==pipes_timer:
-            create_pipes()
-        
-       
-        if waiting_for_start:
+        # --- PAUSE INPUT ---
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                # Only allow pause if the game is actually running (not game over, not start screen)
+                if game_active and not waiting_for_start:
+                    game_paused = not game_paused
+                    
+        # --- PAUSE MENU CLICK HANDLING ---
+        if game_paused and event.type == pygame.MOUSEBUTTONDOWN:
+            action = pause_menu.handle_click(event.pos)
             
-             if event.type == pygame.KEYDOWN:
-                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
-                     waiting_for_start = False
-                     game_active = True
-                     bird.speed_y = jump_strength
-                     sound_flap_play()
-        # -----------------------------------
-        elif not game_active:
-            if game_over_screen.check_for_restart(event):
+            if action == "continue":
+                game_paused = False
+                
+            elif action == "restart":
                 score = reset_game()
-                # Reset background positions on restart so no gaps appear
-                bg_x1 = 0
-                bg_x2 = WIDTH
+                bg_x1, bg_x2 = 0, WIDTH
+                game_paused = False
                 game_active = True
-    
-    # Only draw pipes if we are not on the start screen
-    if not waiting_for_start:
-        draw_pipes()
+                
+            elif action == "menu":
+                running = False # This stops the loop, closes the window, and lets start_page.py wake up
+                
+             
 
-    if waiting_for_start:
-        # --- CHANGED: DRAW START SCREEN ---
-        # Draw bird at center (no movement)
-        screen.blit(bird_image, (bird.x, bird.y))
-        game_over_screen.draw_start_screen(screen)
-        # ----------------------------------
-    elif game_active:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]:
-            jump_bird(bird)
-
-        update_bird(bird)
-        move_pipes()
         
-        bird_hitbox = get_bird_hitbox(bird)
-        new_score = check_score(bird_hitbox, pipes, score)
-        if (new_score > score):
-            score = new_score
-            sound_score_play()
+        if not game_paused:
+            if game_active and event.type == pipes_timer:
+                create_pipes()
             
+            if waiting_for_start:
+                 if event.type == pygame.KEYDOWN:
+                     if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
+                         waiting_for_start = False
+                         game_active = True
+                         bird.speed_y = jump_strength
+                         sound_flap_play()
+                         
+            elif not game_active:
+                if game_over_screen.check_for_restart(event):
+                    score = reset_game()
+                    bg_x1, bg_x2 = 0, WIDTH
+                    game_active = True
+    
+   
+    if not game_paused:
+        
+        if not waiting_for_start:
+            draw_pipes()
+
+        if waiting_for_start:
+            screen.blit(bird_image, (bird.x, bird.y))
+            game_over_screen.draw_start_screen(screen)
+            
+        elif game_active:
+            
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]:
+                jump_bird(bird)
+
+            update_bird(bird)
+            move_pipes()
+            
+            bird_hitbox = get_bird_hitbox(bird)
+            new_score = check_score(bird_hitbox, pipes, score)
+            if (new_score > score):
+                score = new_score
+                sound_score_play()
+                
+            draw_score(screen, score, WIDTH)
+
+            if check_collisions(bird_hitbox, pipes, HEIGHT):
+                sound_hit_play()
+                sound_game_over_play()
+                game_active = False
+                
+        else: # Game Over State
+            angle = -bird.speed_y * 2
+            rotated_bird = pygame.transform.rotate(bird_image, angle)
+            bird_rect = rotated_bird.get_rect(center = (bird.x + BIRD_SIZE / 2, bird.y + BIRD_SIZE / 2))
+            screen.blit(rotated_bird, bird_rect.topleft)
+            game_over_screen.draw(screen, score)
+
+    # 4. DRAW PAUSE MENU (If paused)
+    if game_paused:
+        # Draw everything static first (pipes/birds/etc are frozen in place because we skipped update)
+        draw_pipes()
+        screen.blit(bird_image, (bird.x, bird.y)) # Draw bird at current frozen position
         draw_score(screen, score, WIDTH)
-
-        # pygame.draw.rect(screen, (255, 255, 255), bird_hitbox)
-
-        if check_collisions(bird_hitbox, pipes, HEIGHT):
-            sound_hit_play()
-            sound_game_over_play()
-            game_active = False
-            
-    else:
-        angle = -bird.speed_y * 2
-        rotated_bird = pygame.transform.rotate(bird_image, angle)
-        bird_rect = rotated_bird.get_rect(center = (bird.x + BIRD_SIZE / 2, bird.y + BIRD_SIZE / 2))
-        screen.blit(rotated_bird, bird_rect.topleft)
-
-        game_over_screen.draw(screen, score)
+        
+        # Draw the menu on top
+        pause_menu.draw(screen)
 
     pygame.display.update()
+
 pygame.quit()

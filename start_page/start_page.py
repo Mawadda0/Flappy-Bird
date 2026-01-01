@@ -151,21 +151,41 @@ def check_hover(event):
 canvas.bind('<Motion>', check_hover)
 
 # --- NAVIGATION LOGIC ---
+# --- NAVIGATION LOGIC ---
 def launch_game(script_relative_path):
     global game_running
     if click_sound: click_sound.play()
-    game_running = False
-    root.update()
-    pygame.time.delay(300) 
-    root.destroy()
     
-    # Locate the script in the PARENT folder (PYTHON/)
+    # 1. Stop animation and hide window (don't destroy!)
+    game_running = False
+    pygame.mixer.music.stop() 
+    root.withdraw() 
+    
+    # 2. Locate the script
     script_path = os.path.join(PARENT_DIR, script_relative_path)
     
-    # Run from PARENT_DIR so the game can find 'pipes', 'sound', etc.
-    subprocess.Popen([sys.executable, script_path], cwd=PARENT_DIR)
+    # 3. Run the game and keep the process ID ('proc')
+    proc = subprocess.Popen([sys.executable, script_path], cwd=PARENT_DIR)
+    
+    # 4. Start watching the game process
+    monitor_game(proc)
 
-canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))  
+def monitor_game(proc):
+    # check if the game process is dead (poll() returns a code if dead, None if alive)
+    if proc.poll() is None:
+        # Game is still running, check again in 100ms
+        root.after(100, lambda: monitor_game(proc))
+    else:
+        # Game has closed! Bring back the start page
+        root.deiconify() 
+        pygame.mixer.music.play(-1) 
+        
+        # Restart the animation loop
+        global game_running
+        game_running = True
+        move() 
+
+canvas.tag_bind("start_btn", "<Button-1>", lambda e: launch_game("main.py"))
 # canvas.tag_bind("multi", "<Button-1>", lambda e: launch_game("multiplayer/client.py"))
 
 # --- PIPE & BIRD ---
