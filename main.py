@@ -32,7 +32,7 @@ except:
 
 max_down_speed = 100
 gravity = 0.4
-jump_strength = -5
+jump_strength = -8  # Increased slightly for better feel with single-press jumping
 
 class Bird():
     def __init__(self):
@@ -172,66 +172,54 @@ def reset_score():
 
 
 #-------------------------------------#-------------------------------------#----------------------------
-# PAUSE MENU CLASS (UPDATED)
+# PAUSE MENU CLASS
 #-------------------------------------#-------------------------------------#----------------------------
 class PauseMenu:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
         
-        # --- 1. USE LOCAL FONT & INCREASE SIZE ---
         try:
-            self.font = pygame.font.Font("pixel.ttf", 50) # Increased size
+            self.font = pygame.font.Font("pixel.ttf", 50)
         except Exception as e:
-            print(f"Warning: pixel.ttf not found ({e}). Using Arial.")
             self.font = pygame.font.SysFont('Arial', 50, bold=True)
             
-        # Colors
         self.WHITE = (255, 255, 255)
         self.ORANGE = (252, 190, 46)
         
-        # --- 2. BIGGER BUTTON DIMENSIONS ---
-        btn_width = 300  # Wider
-        btn_height = 70  # Taller
-        gap = 100        # More space between buttons
+        btn_width = 300 
+        btn_height = 70 
+        gap = 100        
         
         cx, cy = screen_width // 2, screen_height // 2
         
-        # Define Rectangles using center coordinates
         self.btn_continue = pygame.Rect(0, 0, btn_width, btn_height)
-        self.btn_continue.center = (cx, cy - gap) # Move Up
+        self.btn_continue.center = (cx, cy - gap)
 
         self.btn_restart = pygame.Rect(0, 0, btn_width, btn_height)
-        self.btn_restart.center = (cx, cy)        # Center
+        self.btn_restart.center = (cx, cy)       
 
         self.btn_menu = pygame.Rect(0, 0, btn_width, btn_height)
-        self.btn_menu.center = (cx, cy + gap)     # Move Down
+        self.btn_menu.center = (cx, cy + gap)    
 
     def draw(self, screen):
-        # 1. Semi-Transparent Overlay
         overlay = pygame.Surface((self.screen_width, self.screen_height))
-        overlay.set_alpha(150) # Slightly darker for better contrast
+        overlay.set_alpha(150)
         overlay.fill((0, 0, 0))
         screen.blit(overlay, (0, 0))
 
-        # 2. "PAUSED" Title
         title_surf = self.font.render("PAUSED", True, self.WHITE)
-        # Position title slightly higher than buttons
         title_rect = title_surf.get_rect(center=(self.screen_width//2, self.screen_height//2 - 200))
         screen.blit(title_surf, title_rect)
 
-        # 3. Draw Buttons
         self._draw_button(screen, self.btn_continue, "Continue")
         self._draw_button(screen, self.btn_restart, "Restart")
         self._draw_button(screen, self.btn_menu, "Main Menu")
 
     def _draw_button(self, screen, rect, text):
-        # Draw filled box
         pygame.draw.rect(screen, self.ORANGE, rect, border_radius=15)
-        # Draw thick border
         pygame.draw.rect(screen, self.WHITE, rect, 4, border_radius=15)
         
-        # Draw text centered
         txt_surf = self.font.render(text, True, self.WHITE)
         txt_rect = txt_surf.get_rect(center=rect.center)
         screen.blit(txt_surf, txt_rect)
@@ -280,7 +268,6 @@ class GameOver:
         screen.blit(score_text, score_rect)
         screen.blit(restart_text, restart_rect)
 
-    # --- ADDED THIS METHOD ---
     def draw_start_screen(self, screen):
         title_text = self.large_font.render("GET READY", True, self.GOLD)
         title_rect = title_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 50))
@@ -290,11 +277,9 @@ class GameOver:
         
         screen.blit(title_text, title_rect)
         screen.blit(start_text, start_rect)
-    # -------------------------
 
     def check_for_restart(self, event):
         if event.type == pygame.KEYDOWN:
-            
             if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
                 return True
         return False
@@ -302,7 +287,7 @@ class GameOver:
 game_over_screen = GameOver(WIDTH, HEIGHT)
 
 #-------------------------------------#-------------------------------------#----------------------------
-# BACKGROUND LOGIC (New Section)
+# BACKGROUND LOGIC
 #-------------------------------------#-------------------------------------#----------------------------
 try:
     bg_surface = pygame.image.load("background.jpeg").convert()
@@ -312,30 +297,37 @@ except FileNotFoundError:
     print("background.jpeg not found. Using solid color.")
     has_background = False
 
-# We use two variables to track the position of the two background copies
 bg_x1 = 0
 bg_x2 = WIDTH
-bg_speed = 1  # Speed of the background (should be slower than pipes)
-
-
-
+bg_speed = 1 
 
 #-------------------------------------#-------------------------------------#----------------------------
-# sound handler
+# sound handler (UPDATED)
 #-------------------------------------#-------------------------------------#----------------------------
 pygame.mixer.init()
 
+# --- Load Existing Sounds ---
+try:
+    flap_sound = pygame.mixer.Sound("./sound/flap.mp3")
+    hit_sound = pygame.mixer.Sound("./sound/hit.mp3")
+    score_sound = pygame.mixer.Sound("./sound/score.mp3")
+    game_over_sound = pygame.mixer.Sound("./sound/gameover.mp3")
+    
+    flap_sound.set_volume(1)
+    hit_sound.set_volume(0.5)
+    score_sound.set_volume(0.5)
+    game_over_sound.set_volume(0.5)
+except:
+    print("Warning: One or more basic sounds not found.")
 
-flap_sound = pygame.mixer.Sound("./sound/flap.mp3")
-hit_sound = pygame.mixer.Sound("./sound/hit.mp3")
-score_sound = pygame.mixer.Sound("./sound/score.mp3")
-game_over_sound = pygame.mixer.Sound("./sound/gameover.mp3")
-
-
-flap_sound.set_volume(1)
-hit_sound.set_volume(0.5)
-score_sound.set_volume(0.5)
-game_over_sound.set_volume(0.5)
+# --- NEW: Load Pause Sound ---
+try:
+    
+    pause_sound = pygame.mixer.Sound("./sound/Jump.wav") 
+    pause_sound.set_volume(0.5)
+except:
+    print("Warning: ./sound/pause.mp3 not found. Creating silent placeholder.")
+    pause_sound = pygame.mixer.Sound(buffer=bytearray([0]*100)) # Silent dummy sound
 
 def sound_flap_play():
     flap_sound.play()
@@ -349,19 +341,10 @@ def sound_score_play():
 def sound_game_over_play():
     game_over_sound.play()
 
+def sound_pause_play():
+    pause_sound.play()
 
-def flap_stop():
-    flap_sound.stop()
 
-
-def sound_hit_stop():
-    hit_sound.stop()
-
-def sound_score_stop():
-    score_sound.stop()
-
-def sound_game_over_stop():
-    game_over_sound.stop()
 #-------------------------------------#-------------------------------------#----------------------------
 # MAIN LOOP (UPDATED)
 #-------------------------------------#-------------------------------------#----------------------------
@@ -369,14 +352,13 @@ def sound_game_over_stop():
 running = True
 game_active = False   
 waiting_for_start = True 
-game_paused = False # <--- NEW VARIABLE
+game_paused = False
 
 while running:
     clock.tick(FPS)
     
-    # 1. DRAW BACKGROUND (Always draw background first)
+    # 1. DRAW BACKGROUND 
     if has_background:
-        # Only move background if game is active AND not paused
         if game_active and not waiting_for_start and not game_paused: 
             bg_x1 -= bg_speed
             bg_x2 -= bg_speed
@@ -394,13 +376,38 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        # --- PAUSE INPUT ---
+        # --- INPUT HANDLING (MOVED JUMP HERE FOR SOUND FIX) ---
         if event.type == pygame.KEYDOWN:
+            
+            # PAUSE CHECK (With Sound)
             if event.key == pygame.K_ESCAPE:
-                # Only allow pause if the game is actually running (not game over, not start screen)
                 if game_active and not waiting_for_start:
+                    sound_pause_play() # Play pause sound
                     game_paused = not game_paused
-                    
+            
+            # START GAME CHECK
+            if waiting_for_start:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
+                    waiting_for_start = False
+                    game_active = True
+                    bird.speed_y = jump_strength
+                    sound_flap_play()
+            
+            # JUMP CHECK (During active game)
+            # We moved this here so sound plays once per press, not 60 times a second
+            elif game_active and not game_paused:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
+                    jump_bird(bird)
+                    sound_flap_play() # Play jump sound
+            
+            # RESTART CHECK (Game Over)
+            elif not game_active and not waiting_for_start:
+                if game_over_screen.check_for_restart(event):
+                    score = reset_game()
+                    bg_x1, bg_x2 = 0, WIDTH
+                    game_active = True
+                    waiting_for_start = True # Go back to "Get Ready"
+
         # --- PAUSE MENU CLICK HANDLING ---
         if game_paused and event.type == pygame.MOUSEBUTTONDOWN:
             action = pause_menu.handle_click(event.pos)
@@ -413,32 +420,17 @@ while running:
                 bg_x1, bg_x2 = 0, WIDTH
                 game_paused = False
                 game_active = True
+                waiting_for_start = True
                 
             elif action == "menu":
-                running = False # This stops the loop, closes the window, and lets start_page.py wake up
+                running = False 
                 
-             
-
-        
-        if not game_paused:
-            if game_active and event.type == pipes_timer:
+        # Pipe Timer
+        if not game_paused and game_active and not waiting_for_start:
+            if event.type == pipes_timer:
                 create_pipes()
-            
-            if waiting_for_start:
-                 if event.type == pygame.KEYDOWN:
-                     if event.key == pygame.K_SPACE or event.key == pygame.K_UP or event.key == pygame.K_w:
-                         waiting_for_start = False
-                         game_active = True
-                         bird.speed_y = jump_strength
-                         sound_flap_play()
-                         
-            elif not game_active:
-                if game_over_screen.check_for_restart(event):
-                    score = reset_game()
-                    bg_x1, bg_x2 = 0, WIDTH
-                    game_active = True
     
-   
+    # 3. GAME UPDATE & DRAW
     if not game_paused:
         
         if not waiting_for_start:
@@ -449,10 +441,8 @@ while running:
             game_over_screen.draw_start_screen(screen)
             
         elif game_active:
-            
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]:
-                jump_bird(bird)
+            # Note: We removed the keys = pygame.key.get_pressed() block for jumping.
+            # It is now handled in the Event Loop above.
 
             update_bird(bird)
             move_pipes()
@@ -479,12 +469,9 @@ while running:
 
     # 4. DRAW PAUSE MENU (If paused)
     if game_paused:
-        # Draw everything static first (pipes/birds/etc are frozen in place because we skipped update)
         draw_pipes()
-        screen.blit(bird_image, (bird.x, bird.y)) # Draw bird at current frozen position
+        screen.blit(bird_image, (bird.x, bird.y))
         draw_score(screen, score, WIDTH)
-        
-        # Draw the menu on top
         pause_menu.draw(screen)
 
     pygame.display.update()
